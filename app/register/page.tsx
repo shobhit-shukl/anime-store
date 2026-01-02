@@ -2,87 +2,81 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation'; // To redirect after login
+import { useRouter } from 'next/navigation';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     role: 'user',
     email: '',
     password: '',
+    confirmPassword: '',
   });
 
-   
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
+    e.preventDefault();
+    setError("");
 
-  // 1. Trim inputs to remove accidental leading/trailing spaces
-  const cleanEmail = formData.email.trim();
-  const cleanPassword = formData.password.trim();
+    const cleanEmail = formData.email.trim();
+    const cleanPassword = formData.password.trim();
+    const cleanConfirmPassword = formData.confirmPassword.trim();
 
-  // 2. Validation: Check if fields are empty after trimming
-  if (!cleanEmail || !cleanPassword) {
-    setError("Please enter both email and password.");
-    return;
-  }
-
-  setLoading(true);
-
-  try {
-    const response = await fetch('/api/Login', { 
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: cleanEmail,    // Send trimmed email
-        password: cleanPassword, // Send trimmed password
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Something went wrong");
-    }
-    
-    console.log("Login Success:", data);
-    
-    // Check if the role matches the selection
-    if (data.role !== formData.role) {
-      setError(`You are registered as a ${data.role}, not an ${formData.role}.`);
-      setLoading(false);
+    if (!cleanEmail || !cleanPassword || !cleanConfirmPassword) {
+      setError("All fields are required.");
       return;
     }
 
-    // Redirect based on role
-    if (data.role === 'admin') {
-      router.push('/AdminPage');
-    } else {
-      router.push('/UserPage');
+    if (cleanPassword !== cleanConfirmPassword) {
+      setError("Passwords do not match.");
+      return;
     }
 
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : "Something went wrong";
-    setError(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+    if (cleanPassword.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: cleanEmail,
+          password: cleanPassword,
+          role: formData.role,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      // Redirect to login page
+      router.push('/');
+
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Something went wrong";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
-      {/* ... (background blurs) ... */}
-
       <div className="w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-xl z-10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-slate-400">Access your anime collection</p>
+          <h1 className="text-3xl font-bold text-white mb-2">Join the Community</h1>
+          <p className="text-slate-400">Create your anime collection account</p>
         </div>
 
-        {/* Display Error Message */}
         {error && (
           <div className="mb-4 p-3 bg-red-500/10 border border-red-500/50 text-red-500 rounded-lg text-sm text-center">
             {error}
@@ -90,7 +84,6 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Role Selection */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">I am an...</label>
             <select
@@ -104,7 +97,6 @@ export default function LoginPage() {
             </select>
           </div>
 
-          {/* Email Input */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
             <input
@@ -118,7 +110,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Password Input */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
             <input
@@ -132,19 +123,32 @@ export default function LoginPage() {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-2">Confirm Password</label>
+            <input
+              disabled={loading}
+              type="password"
+              required
+              placeholder="••••••••"
+              value={formData.confirmPassword}
+              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+              className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+            />
+          </div>
+
           <button
             disabled={loading}
             type="submit"
             className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-lg shadow-lg shadow-blue-600/20 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Creating Account..." : "Create Account"}
           </button>
         </form>
 
         <p className="mt-8 text-center text-slate-400 text-sm">
-          Don&apos;t have an account?{' '}
-          <Link href="/register" className="text-blue-500 hover:underline">
-            Join the community
+          Already have an account?{' '}
+          <Link href="/" className="text-blue-500 hover:underline">
+            Sign in
           </Link>
         </p>
       </div>
