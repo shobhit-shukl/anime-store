@@ -4,7 +4,8 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { title, description, duration, releaseYear, rating, image } = await req.json();
+    const body = await req.json();
+    const { title, description } = body;
 
     if (!title || !description) {
       return NextResponse.json(
@@ -23,14 +24,7 @@ export async function POST(req: Request) {
 
     const Movie = conn.model("Movie", MovieSchema, "movies");
 
-    const newMovie = new Movie({
-      title,
-      description,
-      duration,
-      releaseYear: releaseYear ? parseInt(releaseYear) : undefined,
-      rating,
-      image,
-    });
+    const newMovie = new Movie(body);
 
     await newMovie.save();
 
@@ -41,6 +35,50 @@ export async function POST(req: Request) {
 
   } catch (error) {
     console.error("Movie creation error:", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "Movie ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const conn = await connectDB("movies");
+    if (!conn) {
+      return NextResponse.json(
+        { message: "Database connection failed" },
+        { status: 500 }
+      );
+    }
+
+    const Movie = conn.model("Movie", MovieSchema, "movies");
+    const deletedMovie = await Movie.findByIdAndDelete(id);
+
+    if (!deletedMovie) {
+      return NextResponse.json(
+        { message: "Movie not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Movie deleted successfully" },
+      { status: 200 }
+    );
+
+  } catch (error) {
+    console.error("Movie deletion error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

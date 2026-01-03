@@ -73,10 +73,10 @@ export default function LoginPage() {
 };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white flex items-center justify-center px-4 transition-colors">
       {/* ... (background blurs) ... */}
 
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-xl z-10">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-8 rounded-2xl shadow-xl z-10 transition-colors">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
           <p className="text-slate-400">Access your anime collection</p>
@@ -99,7 +99,7 @@ export default function LoginPage() {
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
             >
-              <option value="user">Member (Otaku)</option>
+              <option value="user">Member</option>
               <option value="admin">Administrator</option>
             </select>
           </div>
