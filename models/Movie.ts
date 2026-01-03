@@ -3,6 +3,7 @@ import { Schema } from "mongoose";
 const EpisodeSchema = new Schema({
   number: { type: Number, required: true },
   title: { type: String, required: true },
+  streamingUrl: { type: String },
 });
 
 const SeasonSchema = new Schema({
@@ -12,6 +13,7 @@ const SeasonSchema = new Schema({
 
 const MovieSchema = new Schema({
   title: { type: String, required: true },
+  videoUrl: { type: String },
   seasons: [SeasonSchema],
   description: { type: String },
   duration: { type: String },

@@ -2,11 +2,14 @@
 
 import React, { useState } from 'react';
 import { PlusCircle, Trash2, ListPlus, Clapperboard, Info, Upload } from 'lucide-react';
+import { useEdgeStore } from '@edgestore/react';
 
 interface Episode { number: number; title: string; }
 interface Season { seasonNumber: number; episodes: Episode[]; }
 
 export default function AdminPage() {
+  const { edgestore } = useEdgeStore();
+  
   // 1. New state to track if we are adding a Movie or a Web Series
   const [contentType, setContentType] = useState<'movie' | 'series'>('series');
   
@@ -43,22 +46,12 @@ export default function AdminPage() {
     try {
       let imageUrl = '';
 
-      // Upload image if provided
+      // Upload image if provided using EdgeStore
       if (image) {
-        const formData = new FormData();
-        formData.append('image', image);
-
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
+        const res = await edgestore.slicemeow.upload({
+          file: image,
         });
-
-        if (!uploadResponse.ok) {
-          throw new Error('Failed to upload image');
-        }
-
-        const uploadData = await uploadResponse.json();
-        imageUrl = uploadData.imageUrl;
+        imageUrl = res.url;
       }
 
       // Prepare payload and URL based on selection

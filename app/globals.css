@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Make dark: classes respond to a .dark class on html/body (Tailwind v4) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Brand-inspired palette: warm light + deep indigo for contrast with orange logo */
+ :root {
+  --background: #fff7ef;
+  --foreground: #0f1720;
 }
 
 @theme inline {
@@ -12,10 +16,15 @@
   --font-mono: var(--font-geist-mono);
 }
 
+.dark {
+  --background: #0f1a2f;
+  --foreground: #e5e7eb;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not(.light) {
+    --background: #0f1a2f;
+    --foreground: #e5e7eb;
   }
 }
 
@@ -23,4 +32,5 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
 }
