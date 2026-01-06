@@ -6,6 +6,7 @@ import { AdminLayout, AdminTable } from "@/components/admin";
 import { Plus, Search, Film } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 interface Movie {
   _id: string;
@@ -17,6 +18,7 @@ interface Movie {
   image?: string;
   genres?: string[];
   status?: string;
+  isFeatured?: boolean;
 }
 
 export default function ManageMoviesPage() {
@@ -52,6 +54,40 @@ export default function ManageMoviesPage() {
       }
     } catch (error) {
       console.error("Failed to delete movie:", error);
+    }
+  };
+
+  const handleToggleFeatured = async (movie: Movie, checked: boolean) => {
+    try {
+      // Optimistic update
+      setMovies((prev) =>
+        prev.map((m) =>
+          m._id === movie._id ? { ...m, isFeatured: checked } : m
+        )
+      );
+
+      const res = await fetch("/api/movie", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: movie._id, isFeatured: checked }),
+      });
+
+      if (!res.ok) {
+        // Revert on failure
+        setMovies((prev) =>
+          prev.map((m) =>
+            m._id === movie._id ? { ...m, isFeatured: !checked } : m
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update movie:", error);
+      // Revert on failure
+      setMovies((prev) =>
+        prev.map((m) =>
+          m._id === movie._id ? { ...m, isFeatured: !checked } : m
+        )
+      );
     }
   };
 
@@ -107,6 +143,17 @@ export default function ManageMoviesPage() {
         ) : (
           <span className="text-slate-500">—</span>
         ),
+    },
+    {
+      key: "isFeatured",
+      label: "Featured",
+      className: "col-span-1",
+      render: (movie: Movie) => (
+        <Switch
+          checked={movie.isFeatured || false}
+          onCheckedChange={(checked) => handleToggleFeatured(movie, checked)}
+        />
+      ),
     },
     {
       key: "status",

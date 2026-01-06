@@ -56,19 +56,19 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           isScrolled
-            ? "bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-b border-slate-200 dark:border-white/5"
-            : "bg-gradient-to-b from-white/80 dark:from-slate-950/80 to-transparent"
+            ? "bg-white/90 dark:bg-black/90 backdrop-blur-xl border-b border-slate-200 dark:border-white/5"
+            : "bg-gradient-to-b from-white/80 dark:from-black/80 to-transparent"
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link href="/UserPage" className="flex items-center gap-2 shrink-0">
-              <Image 
-                src="/Slice Meow Final-log.png" 
-                alt="Slice Meow" 
-                width={150} 
-                height={50} 
+              <Image
+                src="/Slice Meow Final-log.png"
+                alt="Slice Meow"
+                width={150}
+                height={50}
                 className="h-12 w-auto object-contain"
                 priority
               />
@@ -84,7 +84,7 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
                     "px-4 py-2 rounded-xl font-medium transition-colors",
                     pathname === link.href
                       ? "text-blue-600 dark:text-blue-400 bg-blue-500/10"
-                      : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
+                      : "text-slate-600 dark:text-zinc-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                   )}
                 >
                   {link.label}
@@ -144,7 +144,7 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
                   >
                     Login
                   </Link>
-                 
+
                 </div>
               )}
 
@@ -161,7 +161,7 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 dark:border-white/5 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl animate-in slide-in-from-top duration-200">
+          <div className="md:hidden border-t border-slate-200 dark:border-white/5 bg-white/95 dark:bg-black/95 backdrop-blur-xl animate-in slide-in-from-top duration-200">
             <div className="px-4 py-4 space-y-2">
               {navLinks.map((link) => (
                 <Link
@@ -179,7 +179,7 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
                   {link.label}
                 </Link>
               ))}
-              
+
               <div className="border-t border-white/5 pt-2 mt-2">
                 {isLoggedIn ? (
                   <>

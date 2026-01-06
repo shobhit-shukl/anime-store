@@ -74,7 +74,7 @@ export function AnimeCard({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="relative aspect-[2/3] rounded-2xl overflow-hidden border border-white/5 group-hover:border-blue-500/50 transition-all duration-300">
+        <div className="relative aspect-[2/3] rounded-2xl overflow-hidden border border-white/5 group-hover:border-white/20 transition-all duration-300 shadow-md shadow-black/50 group-hover:shadow-[0_10px_30px_rgba(255,255,255,0.1)]">
           <Image
             src={imageError ? "/placeholder-anime.svg" : imageUrl}
             alt={anime.title}
@@ -84,8 +84,8 @@ export function AnimeCard({
             priority={priority}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
-          
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+
           {/* Rating */}
           <div className="absolute top-2 right-2">
             <RatingBadge rating={anime.rating} size="sm" />
@@ -95,7 +95,7 @@ export function AnimeCard({
           {showHover && (
             <div
               className={cn(
-                "absolute inset-0 bg-slate-950/80 flex items-center justify-center transition-opacity duration-300",
+                "absolute inset-0 bg-black/80 flex items-center justify-center transition-opacity duration-300",
                 isHovered ? "opacity-100" : "opacity-0"
               )}
             >
@@ -115,7 +115,7 @@ export function AnimeCard({
     return (
       <div
         onClick={() => onSelect?.(anime)}
-        className="group flex gap-4 p-4 bg-slate-900/50 rounded-2xl border border-white/5 hover:border-blue-500/30 cursor-pointer transition-all duration-300"
+        className="group flex gap-4 p-4 bg-zinc-900/50 rounded-2xl border border-white/5 hover:border-blue-500/30 cursor-pointer transition-all duration-300"
       >
         <div className="relative w-20 h-28 rounded-xl overflow-hidden shrink-0">
           <Image
@@ -160,7 +160,7 @@ export function AnimeCard({
         onMouseLeave={() => setIsHovered(false)}
         className="group relative cursor-pointer"
       >
-        <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border border-white/5 group-hover:border-blue-500/50 transition-all duration-500 group-hover:shadow-[0_20px_50px_rgba(37,99,235,0.3)]">
+        <div className="relative aspect-[16/9] rounded-3xl overflow-hidden border border-white/5 hover:border-zinc-500/30 transition-all duration-500 shadow-xl shadow-black/50 hover:shadow-[0_20px_50px_rgba(255,255,255,0.05)]">
           <Image
             src={anime.bannerImage || imageUrl}
             alt={anime.title}
@@ -170,8 +170,8 @@ export function AnimeCard({
             priority={priority}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
-          
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+
           {/* Content overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-8">
             <div className="flex items-center gap-3 mb-3">
@@ -215,7 +215,7 @@ export function AnimeCard({
       onClick={() => onSelect?.(anime)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group bg-white/50 dark:bg-slate-900/40 backdrop-blur-sm rounded-[32px] overflow-hidden border border-slate-200 dark:border-white/5 hover:border-blue-500/50 transition-all duration-500 cursor-pointer hover:shadow-[0_20px_50px_rgba(37,99,235,0.2)] hover:-translate-y-2"
+      className="group bg-white/50 dark:bg-zinc-900/20 backdrop-blur-md rounded-[24px] overflow-hidden border border-slate-200 dark:border-white/5 hover:border-zinc-500/30 transition-all duration-500 cursor-pointer shadow-lg shadow-black/40 hover:shadow-[0_20px_40px_-15px_rgba(255,255,255,0.1)] hover:-translate-y-2"
     >
       <div className="relative h-80 w-full overflow-hidden">
         <Image
@@ -227,8 +227,8 @@ export function AnimeCard({
           priority={priority}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
-        
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60" />
+
         {/* Bottom info */}
         <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
           <span className="bg-blue-600 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
@@ -241,7 +241,7 @@ export function AnimeCard({
         {showHover && (
           <div
             className={cn(
-              "absolute inset-0 bg-slate-950/80 flex items-center justify-center gap-3 transition-opacity duration-300",
+              "absolute inset-0 bg-black/80 flex items-center justify-center gap-3 transition-opacity duration-300",
               isHovered ? "opacity-100" : "opacity-0"
             )}
           >
@@ -271,7 +271,7 @@ export function AnimeCard({
           </div>
         )}
       </div>
-      
+
       <div className="p-6">
         <h3 className="font-black text-xl truncate mb-1 tracking-tighter group-hover:text-blue-400 transition-colors uppercase italic">
           {anime.title}
@@ -280,7 +280,7 @@ export function AnimeCard({
           <p className="text-sm text-slate-500 truncate mb-3">{anime.titleJapanese}</p>
         )}
         <div className="flex justify-between items-center">
-          <span className="text-slate-500 text-xs font-bold tracking-widest uppercase">
+          <span className="text-zinc-500 text-xs font-bold tracking-widest uppercase">
             {anime.type === "Movie" || anime.type === "movie"
               ? `${anime.duration || "N/A"} • ${anime.releaseYear || "N/A"}`
               : `${totalEpisodes} EPISODES`}

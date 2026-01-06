@@ -30,57 +30,57 @@ export interface ExternalLink {
 export interface Anime {
   id?: string;
   _id?: string;
-  
+
   // Core Info
   title: string;
   titleJapanese?: string;
   titleRomaji?: string;
   slug?: string;
-  
+
   // Media
   posterImage?: string;
   bannerImage?: string;
   trailerUrl?: string;
   image?: string; // Legacy support
-  
+
   // Metadata
   type: "TV" | "Movie" | "OVA" | "ONA" | "Special" | "Music";
   status: "Ongoing" | "Completed" | "Upcoming" | "Hiatus";
   rating?: number; // 0-10 scale
   popularity?: number;
-  
+
   // Categorization
   genres: string[];
   genre?: string[]; // Legacy support
   tags?: string[];
   studio?: string;
   source?: string; // e.g., "Manga", "Light Novel", "Original"
-  
+
   // Description
   synopsis?: string;
   description?: string;
-  
+
   // Dates
   releaseYear?: number;
   startDate?: Date;
   endDate?: Date;
-  
+
   // Content structure
   seasons?: Season[];
   totalEpisodes?: number;
   duration?: string; // For movies: "2h 15m", for series: "24 min/ep"
-  
+
   // External links
   externalLinks?: ExternalLink[];
-  
+
   // User interaction (for future features)
   views?: number;
   favorites?: number;
-  
+
   // Visibility
   isPublished?: boolean;
   isFeatured?: boolean;
-  
+
   // Timestamps
   createdAt?: Date;
   updatedAt?: Date;
@@ -108,9 +108,9 @@ export interface Movie {
   updatedAt?: Date;
   type?: string;
   totalEpisodes?: number;
-  views?: number;
   popularity?: number;
   externalLinks?: ExternalLink[];
+  isFeatured?: boolean;
 }
 
 // Utility type for filters

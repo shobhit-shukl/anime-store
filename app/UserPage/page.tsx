@@ -19,8 +19,9 @@ export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // Combine for featured carousel
-  const featuredAnime = [...movies, ...webseries].slice(0, 5);
+  // Combine for featured carousel - Filter by isFeatured
+  // Combine for featured carousel - Filter by isFeatured
+  const featuredAnime = [...movies, ...webseries].filter(item => item.isFeatured === true).slice(0, 5);
 
   // Fetch data
   useEffect(() => {
@@ -84,7 +85,7 @@ export default function HomePage() {
       {loading ? (
         <HeroSkeleton />
       ) : featuredAnime.length > 0 ? (
-        <section className="relative h-[85vh] md:h-[90vh] overflow-hidden">
+        <section className="relative h-[85vh] md:h-[90vh] overflow-hidden bg-black">
           {/* Background images with transition */}
           {featuredAnime.map((anime, index) => (
             <div
@@ -104,9 +105,9 @@ export default function HomePage() {
           ))}
 
           {/* Gradient overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/70 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(2,6,23,0.8)_100%)]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(0,0,0,0.8)_100%)]" />
 
           {/* Hero content */}
           <div className="absolute inset-0 flex items-center">
@@ -127,7 +128,7 @@ export default function HomePage() {
 
                 {/* Japanese title */}
                 {currentFeatured?.titleJapanese && (
-                  <p className="text-xl text-slate-400 font-medium">
+                  <p className="text-xl text-zinc-400 font-medium">
                     {currentFeatured.titleJapanese}
                   </p>
                 )}
@@ -142,7 +143,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Description */}
-                <p className="text-slate-300 text-lg leading-relaxed line-clamp-3 max-w-xl">
+                <p className="text-zinc-300 text-lg leading-relaxed line-clamp-3 max-w-xl">
                   {currentFeatured?.synopsis ||
                     currentFeatured?.description ||
                     "Discover an incredible anime experience."}
@@ -223,7 +224,7 @@ export default function HomePage() {
         </section>
       ) : (
         // Empty state hero
-        <section className="relative h-[70vh] flex items-center justify-center bg-gradient-to-b from-slate-900 to-slate-950">
+        <section className="relative h-[70vh] flex items-center justify-center bg-black">
           <div className="text-center px-4 max-w-3xl flex flex-col items-center">
             <div className="relative w-64 h-32 md:w-96 md:h-48 mb-6">
               <Image
@@ -234,7 +235,7 @@ export default function HomePage() {
                 priority
               />
             </div>
-            <p className="text-slate-400 text-lg mb-8">
+            <p className="text-zinc-400 text-lg mb-8">
               Your personal sanctuary for anime. Start building your collection.
             </p>
             <SearchBar
@@ -300,7 +301,7 @@ export default function HomePage() {
                   <h2 className="text-2xl md:text-3xl font-black tracking-tighter uppercase">
                     Browse by Genre
                   </h2>
-                  <p className="text-sm text-slate-500 mt-0.5">
+                  <p className="text-sm text-zinc-500 mt-0.5">
                     Find anime by your favorite categories
                   </p>
                 </div>

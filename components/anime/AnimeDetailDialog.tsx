@@ -80,7 +80,7 @@ export function AnimeDetailDialog({ item, isOpen, onClose }: AnimeDetailDialogPr
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-            <DialogContent className="max-w-5xl p-0 overflow-hidden bg-slate-950 border-slate-800 text-slate-100 sm:rounded-2xl gap-0 max-h-[90vh] flex flex-col">
+            <DialogContent className="max-w-5xl p-0 overflow-hidden bg-black border-zinc-800 text-zinc-100 sm:rounded-2xl gap-0 max-h-[90vh] flex flex-col">
                 <div className="hidden">
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>Details for {title}</DialogDescription>
@@ -98,7 +98,7 @@ export function AnimeDetailDialog({ item, isOpen, onClose }: AnimeDetailDialogPr
                                 className="object-cover opacity-60"
                             />
                             {/* Gradient overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
                         </div>
 
                         <button
@@ -114,7 +114,7 @@ export function AnimeDetailDialog({ item, isOpen, onClose }: AnimeDetailDialogPr
                         <div className="flex flex-col md:flex-row gap-6 md:gap-8">
                             {/* Poster Card */}
                             <div className="shrink-0 mx-auto md:mx-0">
-                                <div className="relative w-40 h-60 md:w-56 md:h-80 rounded-lg overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-slate-700/50">
+                                <div className="relative w-40 h-60 md:w-56 md:h-80 rounded-lg overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-zinc-700/50">
                                     <Image
                                         src={image}
                                         alt={title}
@@ -153,7 +153,7 @@ export function AnimeDetailDialog({ item, isOpen, onClose }: AnimeDetailDialogPr
                                         </div>
                                     )}
 
-                                    <div className="px-2 py-0.5 rounded-md bg-slate-800 text-xs font-bold uppercase tracking-wider text-slate-400 border border-slate-700">
+                                    <div className="px-2 py-0.5 rounded-md bg-zinc-800 text-xs font-bold uppercase tracking-wider text-zinc-400 border border-zinc-700">
                                         {type}
                                     </div>
                                 </div>
@@ -176,7 +176,7 @@ export function AnimeDetailDialog({ item, isOpen, onClose }: AnimeDetailDialogPr
 
                                     <Button
                                         variant="outline"
-                                        className="border-slate-700 bg-slate-800/50 hover:bg-slate-800 text-slate-200 gap-2 rounded-full"
+                                        className="border-zinc-700 bg-zinc-800/50 hover:bg-zinc-800 text-zinc-200 gap-2 rounded-full"
                                         onClick={() => setShowFullDescription(!showFullDescription)}
                                     >
                                         <Info className="w-4 h-4" />
@@ -188,7 +188,7 @@ export function AnimeDetailDialog({ item, isOpen, onClose }: AnimeDetailDialogPr
                                     <Button size="icon" variant="ghost" className="text-slate-400 hover:text-pink-500 hover:bg-pink-500/10 rounded-full">
                                         <Heart className="w-5 h-5" />
                                     </Button>
-                                    <Button size="icon" variant="ghost" className="text-slate-400 hover:text-white hover:bg-slate-800 rounded-full">
+                                    <Button size="icon" variant="ghost" className="text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-full">
                                         <Share2 className="w-5 h-5" />
                                     </Button>
                                 </div>
@@ -196,7 +196,7 @@ export function AnimeDetailDialog({ item, isOpen, onClose }: AnimeDetailDialogPr
                                 {/* Description */}
                                 <div
                                     className={cn(
-                                        "relative bg-slate-900/50 rounded-xl p-4 border border-slate-800/50 transition-all duration-300 ease-in-out",
+                                        "relative bg-zinc-900/50 rounded-xl p-4 border border-zinc-800/50 transition-all duration-300 ease-in-out",
                                         showFullDescription ? "opacity-100" : "opacity-100"
                                     )}
                                 >
@@ -220,7 +220,7 @@ export function AnimeDetailDialog({ item, isOpen, onClose }: AnimeDetailDialogPr
 
                                         <Tabs value={activeSeason} onValueChange={setActiveSeason} className="w-full">
                                             {seasons.length > 1 && (
-                                                <TabsList className="bg-slate-900/50 border border-slate-800 mb-4 w-full justify-start h-auto p-1 flex-wrap">
+                                                <TabsList className="bg-zinc-900/50 border border-zinc-800 mb-4 w-full justify-start h-auto p-1 flex-wrap">
                                                     {seasons.map((season: any) => (
                                                         <TabsTrigger
                                                             key={season.seasonNumber}
@@ -247,7 +247,7 @@ export function AnimeDetailDialog({ item, isOpen, onClose }: AnimeDetailDialogPr
                                                             />
                                                         ))
                                                     ) : (
-                                                        <div className="text-slate-500 py-8 text-center bg-slate-900/30 rounded-xl border border-dashed border-slate-800">
+                                                        <div className="text-zinc-500 py-8 text-center bg-zinc-900/30 rounded-xl border border-dashed border-zinc-800">
                                                             No episodes available for this season.
                                                         </div>
                                                     )}

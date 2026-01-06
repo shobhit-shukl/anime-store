@@ -42,6 +42,50 @@ export async function POST(req: Request) {
   }
 }
 
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, ...updateData } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "Movie ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const conn = await connectDB("movies");
+    if (!conn) {
+      return NextResponse.json(
+        { message: "Database connection failed" },
+        { status: 500 }
+      );
+    }
+
+    const Movie = conn.model("Movie", MovieSchema, "movies");
+    const updatedMovie = await Movie.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedMovie) {
+      return NextResponse.json(
+        { message: "Movie not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Movie updated successfully", movie: updatedMovie },
+      { status: 200 }
+    );
+
+  } catch (error) {
+    console.error("Movie update error:", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function DELETE(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

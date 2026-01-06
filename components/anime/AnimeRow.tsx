@@ -82,11 +82,11 @@ export function AnimeRow({
               {title}
             </h2>
             {subtitle && (
-              <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p>
+              <p className="text-sm text-zinc-500 mt-0.5">{subtitle}</p>
             )}
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {/* Scroll buttons */}
           {animeList.length > 4 && (
@@ -98,7 +98,7 @@ export function AnimeRow({
                   "w-10 h-10 rounded-full flex items-center justify-center transition-all",
                   canScrollLeft
                     ? "bg-white/10 hover:bg-white/20 text-white"
-                    : "bg-white/5 text-slate-600 cursor-not-allowed"
+                    : "bg-white/5 text-zinc-600 cursor-not-allowed"
                 )}
               >
                 <ChevronLeft size={20} />
@@ -110,14 +110,14 @@ export function AnimeRow({
                   "w-10 h-10 rounded-full flex items-center justify-center transition-all",
                   canScrollRight
                     ? "bg-white/10 hover:bg-white/20 text-white"
-                    : "bg-white/5 text-slate-600 cursor-not-allowed"
+                    : "bg-white/5 text-zinc-600 cursor-not-allowed"
                 )}
               >
                 <ChevronRight size={20} />
               </button>
             </>
           )}
-          
+
           {showViewAll && (
             <button
               onClick={onViewAll}
@@ -138,14 +138,14 @@ export function AnimeRow({
         </div>
       ) : animeList.length === 0 ? (
         <div className="text-center py-12 px-6">
-          <p className="text-slate-500">No anime found in this category.</p>
+          <p className="text-zinc-500">No anime found in this category.</p>
         </div>
       ) : (
         // Scrollable row
         <div
           ref={scrollRef}
           onScroll={checkScroll}
-          className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 px-6 md:px-0 snap-x snap-mandatory"
+          className="flex gap-6 overflow-x-auto scrollbar-hide py-8 px-6 md:px-8 snap-x snap-mandatory -my-4"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {animeList.map((anime, index) => (

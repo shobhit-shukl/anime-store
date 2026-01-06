@@ -42,6 +42,50 @@ export async function POST(req: Request) {
   }
 }
 
+export async function PUT(req: Request) {
+  try {
+    const body = await req.json();
+    const { id, ...updateData } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "Series ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const conn = await connectDB("webseries");
+    if (!conn) {
+      return NextResponse.json(
+        { message: "Database connection failed" },
+        { status: 500 }
+      );
+    }
+
+    const WebSeries = conn.model("WebSeries", MovieSchema, "webseries");
+    const updatedSeries = await WebSeries.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedSeries) {
+      return NextResponse.json(
+        { message: "Series not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      { message: "Series updated successfully", series: updatedSeries },
+      { status: 200 }
+    );
+
+  } catch (error) {
+    console.error("Series update error:", error);
+    return NextResponse.json(
+      { message: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function GET() {
   try {
     const conn = await connectDB("webseries");

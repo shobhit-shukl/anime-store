@@ -22,6 +22,7 @@ const MovieSchema = new Schema({
   rating: { type: Number },
   status: { type: String, enum: ['Ongoing', 'Completed'] },
   genre: [{ type: String }],
+  isFeatured: { type: Boolean, default: false },
 }, {
   timestamps: true,
 });

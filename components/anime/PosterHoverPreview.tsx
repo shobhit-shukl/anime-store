@@ -54,7 +54,7 @@ export function PosterHoverPreview({
   return (
     <div
       className={cn(
-        "absolute z-50 w-80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 transform",
+        "absolute z-50 w-80 bg-white/95 dark:bg-black/95 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 transform",
         position === "right" ? "left-full ml-4" : "right-full mr-4",
         isVisible
           ? "opacity-100 translate-x-0 scale-100"
@@ -71,8 +71,8 @@ export function PosterHoverPreview({
           className="object-cover"
           sizes="320px"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
-        
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/50 to-transparent" />
+
         {/* Play button */}
         <div className="absolute inset-0 flex items-center justify-center">
           <button
@@ -103,14 +103,14 @@ export function PosterHoverPreview({
             <Star size={14} fill="currentColor" />
             <span className="font-bold">{anime.rating?.toFixed(1) || "N/A"}</span>
           </div>
-          
+
           {anime.releaseYear && (
             <div className="flex items-center gap-1 text-slate-400">
               <Calendar size={14} />
               <span>{anime.releaseYear}</span>
             </div>
           )}
-          
+
           {isMovie ? (
             <div className="flex items-center gap-1 text-slate-400">
               <Film size={14} />

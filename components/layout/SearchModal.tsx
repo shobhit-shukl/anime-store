@@ -27,7 +27,7 @@ export function SearchModal({ isOpen, onClose, onSelect }: SearchModalProps) {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
-    
+
     // Load recent searches from localStorage
     const saved = localStorage.getItem("recentSearches");
     if (saved) {
@@ -123,12 +123,12 @@ export function SearchModal({ isOpen, onClose, onSelect }: SearchModalProps) {
     <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[10vh]">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl"
+        className="absolute inset-0 bg-white/90 dark:bg-black/90 backdrop-blur-xl"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl mx-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 transition-colors">
+      <div className="relative w-full max-w-2xl mx-4 bg-white dark:bg-black border border-slate-200 dark:border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 transition-colors">
         {/* Search input */}
         <div className="flex items-center gap-4 p-5 border-b border-slate-200 dark:border-white/5">
           <Search size={24} className="text-slate-400 shrink-0" />

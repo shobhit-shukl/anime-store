@@ -6,6 +6,7 @@ import { AdminLayout, AdminTable } from "@/components/admin";
 import { Plus, Search, Tv } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 
 interface Season {
   seasonNumber: number;
@@ -20,6 +21,7 @@ interface Series {
   genres?: string[];
   status?: string;
   seasons?: Season[];
+  isFeatured?: boolean;
 }
 
 export default function ManageSeriesPage() {
@@ -55,6 +57,40 @@ export default function ManageSeriesPage() {
       }
     } catch (error) {
       console.error("Failed to delete series:", error);
+    }
+  };
+
+  const handleToggleFeatured = async (item: Series, checked: boolean) => {
+    try {
+      // Optimistic update
+      setSeries((prev) =>
+        prev.map((s) =>
+          s._id === item._id ? { ...s, isFeatured: checked } : s
+        )
+      );
+
+      const res = await fetch("/api/webseries", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: item._id, isFeatured: checked }),
+      });
+
+      if (!res.ok) {
+        // Revert
+        setSeries((prev) =>
+          prev.map((s) =>
+            s._id === item._id ? { ...s, isFeatured: !checked } : s
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update series:", error);
+      // Revert
+      setSeries((prev) =>
+        prev.map((s) =>
+          s._id === item._id ? { ...s, isFeatured: !checked } : s
+        )
+      );
     }
   };
 
@@ -133,16 +169,26 @@ export default function ManageSeriesPage() {
       className: "col-span-1",
       render: (item: Series) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs font-bold ${
-            item.status === "Ongoing"
+          className={`px-2 py-1 rounded-full text-xs font-bold ${item.status === "Ongoing"
               ? "bg-green-500/10 text-green-400"
               : item.status === "Completed"
-              ? "bg-blue-500/10 text-blue-400"
-              : "bg-yellow-500/10 text-yellow-400"
-          }`}
+                ? "bg-blue-500/10 text-blue-400"
+                : "bg-yellow-500/10 text-yellow-400"
+            }`}
         >
           {item.status || "Unknown"}
         </span>
+      ),
+    },
+    {
+      key: "isFeatured",
+      label: "Featured",
+      className: "col-span-1",
+      render: (item: Series) => (
+        <Switch
+          checked={item.isFeatured || false}
+          onCheckedChange={(checked) => handleToggleFeatured(item, checked)}
+        />
       ),
     },
   ];
