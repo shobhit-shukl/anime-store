@@ -85,19 +85,6 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">I am an...</label>
-            <select
-              disabled={loading}
-              value={formData.role}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="w-full px-4 py-3 rounded-lg bg-slate-800 border border-slate-700 text-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-            >
-              <option value="user">Member</option>
-              <option value="admin">Administrator</option>
-            </select>
-          </div>
-
-          <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
             <input
               disabled={loading}

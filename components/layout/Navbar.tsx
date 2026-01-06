@@ -94,7 +94,7 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
 
             {/* Right side actions */}
             <div className="flex items-center gap-2">
-              <ThemeToggle />
+              {/* <ThemeToggle /> */}
               {/* Search button */}
               <button
                 onClick={() => setIsSearchOpen(true)}
@@ -112,7 +112,7 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
               {/* User menu */}
               {isLoggedIn ? (
                 <div className="hidden sm:flex items-center gap-2">
-                  <Link
+                  {/* <Link
                     href="/watchlist"
                     className="p-2 rounded-xl hover:bg-white/10 transition-colors"
                     title="Watchlist"
@@ -125,7 +125,7 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
                     title="History"
                   >
                     <Clock size={20} className="text-slate-400 hover:text-blue-400" />
-                  </Link>
+                  </Link> */}
                   <div className="w-px h-6 bg-white/10 mx-2" />
                   <button className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
@@ -144,12 +144,7 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
                   >
                     Login
                   </Link>
-                  <Link
-                    href="/register"
-                    className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-bold transition-colors"
-                  >
-                    Sign Up
-                  </Link>
+                 
                 </div>
               )}
 

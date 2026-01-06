@@ -9,8 +9,10 @@ const es = initEdgeStore.create();
 const edgeStoreRouter = es.router({
   slicemeow: es.imageBucket({
     maxSize: 5 * 1024 * 1024, // 5MB
-  }),
+  }).beforeUpload(() => true),
 });
+
+export const dynamic = "force-dynamic";
 
 const handler = createEdgeStoreNextHandler({
   router: edgeStoreRouter,

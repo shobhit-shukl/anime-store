@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Play, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navbar, Footer } from "@/components/layout";
-import { AnimeRow, GenrePill, RatingBadge } from "@/components/anime";
+import { AnimeRow, GenrePill, RatingBadge, AnimeDetailDialog } from "@/components/anime";
 import { Button } from "@/components/ui/button";
 import { HeroSkeleton, AnimeRowSkeleton } from "@/components/ui/skeleton";
 import { SearchBar, SearchModal } from "@/components/layout/SearchModal";
@@ -65,15 +65,20 @@ export default function HomePage() {
     }
   }, [featuredAnime.length]);
 
+  /* Dialog State */
+  const [selectedAnime, setSelectedAnime] = useState<AnimeData | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+
   const currentFeatured = featuredAnime[currentSlide];
 
   const handleAnimeSelect = (anime: AnimeData) => {
-    console.log("Selected:", anime);
+    setSelectedAnime(anime);
+    setIsDetailOpen(true);
   };
 
   return (
     <main className="min-h-screen bg-[--background] text-[--foreground] transition-colors">
-      <Navbar isLoggedIn={true} username="Admin" />
+      <Navbar isLoggedIn={true} />
 
       {/* Hero Section */}
       {loading ? (
@@ -84,9 +89,8 @@ export default function HomePage() {
           {featuredAnime.map((anime, index) => (
             <div
               key={anime.id || anime._id || index}
-              className={`absolute inset-0 transition-opacity duration-1000 ${
-                index === currentSlide ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? "opacity-100" : "opacity-0"
+                }`}
             >
               <Image
                 src={anime.bannerImage || anime.posterImage || anime.image || "/placeholder-anime.svg"}
@@ -146,11 +150,20 @@ export default function HomePage() {
 
                 {/* CTA Buttons */}
                 <div className="flex gap-4 pt-4">
-                  <Button size="xl" className="gap-3">
+                  <Button
+                    size="xl"
+                    className="gap-3"
+                    onClick={() => console.log("Watch", currentFeatured)}
+                  >
                     <Play size={24} fill="currentColor" />
                     Watch Now
                   </Button>
-                  <Button size="xl" variant="secondary" className="gap-2">
+                  <Button
+                    size="xl"
+                    variant="secondary"
+                    className="gap-2"
+                    onClick={() => handleAnimeSelect(currentFeatured)}
+                  >
                     <Info size={20} />
                     More Info
                   </Button>
@@ -179,11 +192,10 @@ export default function HomePage() {
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      index === currentSlide
-                        ? "w-8 bg-blue-500"
-                        : "bg-white/30 hover:bg-white/50"
-                    }`}
+                    className={`w-2 h-2 rounded-full transition-all ${index === currentSlide
+                      ? "w-8 bg-blue-500"
+                      : "bg-white/30 hover:bg-white/50"
+                      }`}
                   />
                 ))}
               </div>
@@ -214,9 +226,9 @@ export default function HomePage() {
         <section className="relative h-[70vh] flex items-center justify-center bg-gradient-to-b from-slate-900 to-slate-950">
           <div className="text-center px-4 max-w-3xl flex flex-col items-center">
             <div className="relative w-64 h-32 md:w-96 md:h-48 mb-6">
-              <Image 
-                src="/Slice Meow Final-log.png" 
-                alt="Slice Meow" 
+              <Image
+                src="/Slice Meow Final-log.png"
+                alt="Slice Meow"
                 fill
                 className="object-contain"
                 priority
@@ -323,15 +335,25 @@ export default function HomePage() {
       </div>
 
       <Footer />
-      
+
       {/* Search Modal */}
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         onSelect={(item) => {
-          // Navigate to anime detail page
+          // If we want to open the detail modal instead of navigating
+          const mappedItem = { ...item, type: typeof item.type === 'string' ? item.type : "Anime" } as AnimeData;
+          // Note: item structure from search might differ slightly, but for now we assume navigation or reuse.
+          // Requirement says "Navigate to anime detail page". I'll keep navigation for search for now as per code.
           window.location.href = `/anime/${item._id || item.id}`;
         }}
+      />
+
+      {/* Detail Modal */}
+      <AnimeDetailDialog
+        item={selectedAnime}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
       />
     </main>
   );

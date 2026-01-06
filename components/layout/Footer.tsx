@@ -8,7 +8,7 @@ export function Footer() {
   const footerLinks = {
     browse: [
       { label: "All Anime", href: "/browse" },
-      { label: "Movies", href: "/movies" },
+      { label: "Movies", href: "/browse?type=Movie" },
       { label: "TV Series", href: "/browse?type=TV" },
       { label: "Trending", href: "/browse?sort=popularity" },
     ],
@@ -21,8 +21,8 @@ export function Footer() {
     account: [
       { label: "Login", href: "/" },
       { label: "Register", href: "/register" },
-      { label: "Watchlist", href: "/watchlist" },
-      { label: "Settings", href: "/settings" },
+      { label: "Watchlist", href: "#" }, // Fallback until page exists
+      { label: "Settings", href: "#" },   // Fallback until page exists
     ],
   };
 
@@ -34,11 +34,11 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-block">
-              <Image 
-                src="/Slice Meow Final-log.png" 
-                alt="Slice Meow" 
-                width={150} 
-                height={50} 
+              <Image
+                src="/Slice Meow Final-log.png"
+                alt="Slice Meow"
+                width={150}
+                height={50}
                 className="h-12 w-auto object-contain"
               />
             </Link>
@@ -68,7 +68,7 @@ export function Footer() {
             </h3>
             <ul className="space-y-3">
               {footerLinks.browse.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link
                     href={link.href}
                     className="text-sm text-slate-500 hover:text-blue-400 transition-colors"
@@ -87,7 +87,7 @@ export function Footer() {
             </h3>
             <ul className="space-y-3">
               {footerLinks.genres.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link
                     href={link.href}
                     className="text-sm text-slate-500 hover:text-blue-400 transition-colors"
@@ -106,7 +106,7 @@ export function Footer() {
             </h3>
             <ul className="space-y-3">
               {footerLinks.account.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link
                     href={link.href}
                     className="text-sm text-slate-500 hover:text-blue-400 transition-colors"
