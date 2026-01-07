@@ -1,28 +1,67 @@
 import mongoose from "mongoose";
 
+const MONGODB_URI = process.env.MONGODB_URI;
 
-export async function connectDB(dbName: string = "auth") {
-  const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) {
+  throw new Error(
+    "Please define the MONGODB_URI environment variable inside .env.local"
+  );
+}
 
-  // Safety Check: This will show in your terminal if the .env isn't working
-  if (!MONGODB_URI) {
-    console.error("❌ ERROR: MONGODB_URI is undefined. Check your .env.local file.");
-    return;
+/**
+ * Global is used here to maintain a cached connection across hot reloads
+ * in development. This prevents connections growing exponentially
+ * during API Route usage.
+ */
+interface MongooseCache {
+  conn: mongoose.Connection | null;
+  promise: Promise<mongoose.Connection> | null;
+}
+
+declare global {
+  var mongooseCaches: Map<string, MongooseCache> | undefined;
+}
+
+let caches = global.mongooseCaches;
+
+if (!caches) {
+  caches = global.mongooseCaches = new Map();
+}
+
+export async function connectDB(dbName: string = "anime_store") {
+  let cached = caches!.get(dbName);
+
+  if (!cached) {
+    cached = { conn: null, promise: null };
+    caches!.set(dbName, cached);
   }
 
-  // Create a unique connection for each database
-  const connectionKey = `connection_${dbName}`;
-  if (mongoose.connections.find(conn => conn.name === dbName && conn.readyState === 1)) {
-    return mongoose.connections.find(conn => conn.name === dbName);
+  if (cached.conn && cached.conn.readyState === 1) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+      dbName: dbName,
+    };
+
+    // Use createConnection for multiple databases
+    cached.promise = Promise.resolve(mongoose.createConnection(MONGODB_URI!, opts));
+    console.log(`📡 Initializing connection for: ${dbName}`);
   }
 
   try {
-    const conn = await mongoose.createConnection(MONGODB_URI, {
-      dbName: dbName,
-    });
-    console.log(`✅ Connected to MongoDB database: ${dbName}`);
-    return conn;
-  } catch (error) {
-    console.error(`❌ MongoDB connection failed for ${dbName}:`, error);
+    cached.conn = await cached.promise;
+    if (cached.conn.readyState !== 1) {
+      await new Promise((resolve, reject) => {
+        cached!.conn!.once('open', resolve);
+        cached!.conn!.once('error', reject);
+      });
+    }
+    return cached.conn;
+  } catch (e) {
+    cached.promise = null;
+    throw e;
   }
 }

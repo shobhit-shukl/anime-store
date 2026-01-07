@@ -13,15 +13,32 @@ const SeasonSchema = new Schema({
 
 const MovieSchema = new Schema({
   title: { type: String, required: true },
+  titleJapanese: { type: String },
   videoUrl: { type: String },
   seasons: [SeasonSchema],
   description: { type: String },
   duration: { type: String },
   releaseYear: { type: Number },
   image: { type: String },
+  bannerImage: { type: String },
   rating: { type: Number },
-  status: { type: String, enum: ['Ongoing', 'Completed'] },
+  type: {
+    type: String,
+    enum: ['TV', 'TV_Short', 'Movie', 'OVA', 'ONA', 'Special', 'Music'],
+    default: 'TV'
+  },
+  format: {
+    type: String,
+    enum: ['Standalone', 'Episodic'],
+    default: 'Episodic'
+  },
+  status: { type: String, enum: ['Ongoing', 'Completed', 'Upcoming', 'Hiatus'] },
   genre: [{ type: String }],
+  genres: [{ type: String }], // Add both to be safe
+  externalLinks: [{
+    platform: String,
+    url: String
+  }],
 }, {
   timestamps: true,
 });

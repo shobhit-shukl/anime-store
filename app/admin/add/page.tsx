@@ -36,30 +36,32 @@ export default function AddAnimePage() {
 
       const payload = isMovie
         ? {
-            title: data.title,
-            titleJapanese: data.titleJapanese,
-            description: data.synopsis,
-            duration: data.duration,
-            releaseYear: data.releaseYear?.toString(),
-            rating: data.rating,
-            image: data.posterImage,
-            bannerImage: data.bannerImage,
-            videoUrl: data.videoUrl,
-            genres: data.genres,
-            status: data.status,
-            externalLinks: data.externalLinks,
-          }
+          title: data.title,
+          titleJapanese: data.titleJapanese,
+          description: data.synopsis,
+          duration: data.duration,
+          releaseYear: data.releaseYear?.toString(),
+          rating: data.rating,
+          image: data.posterImage,
+          bannerImage: data.bannerImage,
+          videoUrl: data.videoUrl,
+          genres: data.genres,
+          status: data.status,
+          type: data.type, // Pass the specific type
+          externalLinks: data.externalLinks,
+        }
         : {
-            title: data.title,
-            titleJapanese: data.titleJapanese,
-            description: data.synopsis,
-            image: data.posterImage,
-            bannerImage: data.bannerImage,
-            genres: data.genres,
-            status: data.status,
-            seasons: data.seasons,
-            externalLinks: data.externalLinks,
-          };
+          title: data.title,
+          titleJapanese: data.titleJapanese,
+          description: data.synopsis,
+          image: data.posterImage,
+          bannerImage: data.bannerImage,
+          genres: data.genres,
+          status: data.status,
+          type: data.type, // Pass the specific type (OVA, ONA, Special, etc.)
+          seasons: data.seasons,
+          externalLinks: data.externalLinks,
+        };
 
       const response = await fetch(url, {
         method: "POST",
@@ -72,7 +74,7 @@ export default function AddAnimePage() {
       }
 
       setMessage({ type: "success", text: `${isMovie ? "Movie" : "Series"} added successfully!` });
-      
+
       // Redirect after success
       setTimeout(() => {
         router.push(isMovie ? "/admin/movies" : "/admin/series");
@@ -105,11 +107,10 @@ export default function AddAnimePage() {
         {/* Message */}
         {message && (
           <div
-            className={`p-4 rounded-xl border ${
-              message.type === "success"
+            className={`p-4 rounded-xl border ${message.type === "success"
                 ? "bg-green-500/10 border-green-500/30 text-green-400"
                 : "bg-red-500/10 border-red-500/30 text-red-400"
-            }`}
+              }`}
           >
             <p className="font-bold">{message.text}</p>
           </div>

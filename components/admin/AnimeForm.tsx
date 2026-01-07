@@ -42,7 +42,7 @@ interface AnimeFormProps {
 
 export function AnimeForm({ initialData, onSubmit, isLoading = false }: AnimeFormProps) {
   const { edgestore } = useEdgeStore();
-  
+
   const [formData, setFormData] = useState<AnimeFormData>({
     title: initialData?.title || "",
     titleJapanese: initialData?.titleJapanese || "",
@@ -159,13 +159,13 @@ export function AnimeForm({ initialData, onSubmit, isLoading = false }: AnimeFor
 
       // Upload poster if new file
       if (posterFile) {
-        const res = await edgestore.slicemeow.upload({ file: posterFile });
+        const res = await edgestore.anime.upload({ file: posterFile });
         posterUrl = res.url;
       }
 
       // Upload banner if new file
       if (bannerFile) {
-        const res = await edgestore.slicemeow.upload({ file: bannerFile });
+        const res = await edgestore.anime.upload({ file: bannerFile });
         bannerUrl = res.url;
       }
 
@@ -173,6 +173,7 @@ export function AnimeForm({ initialData, onSubmit, isLoading = false }: AnimeFor
         ...formData,
         posterImage: posterUrl,
         bannerImage: bannerUrl,
+        seasons: formData.type === "Movie" ? [] : formData.seasons,
       });
     } finally {
       setUploading(false);

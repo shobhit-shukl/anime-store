@@ -7,7 +7,7 @@ const es = initEdgeStore.create();
  * This is the main router for the EdgeStore buckets.
  */
 const edgeStoreRouter = es.router({
-  slicemeow: es.imageBucket({
+  anime: es.imageBucket({
     maxSize: 5 * 1024 * 1024, // 5MB
   }),
 });

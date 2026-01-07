@@ -2,24 +2,30 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AdminLayout, AdminTable } from "@/components/admin";
-import { Plus, Search, Film } from "lucide-react";
+import { Plus, Search, Film, Clock, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface Movie {
   _id: string;
   title: string;
   description?: string;
   duration?: string;
-  releaseYear?: string;
+  releaseYear?: number;
   rating?: number;
   image?: string;
+  genre?: string[];
   genres?: string[];
   status?: string;
+  type?: string;
+  format?: 'Standalone' | 'Episodic';
 }
 
 export default function ManageMoviesPage() {
+  const router = useRouter();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -81,7 +87,7 @@ export default function ManageMoviesPage() {
       render: (movie: Movie) => (
         <div>
           <p className="font-bold truncate">{movie.title}</p>
-          <p className="text-xs text-slate-500 truncate">{movie.description?.slice(0, 50)}...</p>
+          <p className="text-xs text-slate-500 truncate">{movie.description?.slice(0, 50) || "No description"}...</p>
         </div>
       ),
     },
@@ -89,11 +95,23 @@ export default function ManageMoviesPage() {
       key: "releaseYear",
       label: "Year",
       className: "col-span-1",
+      render: (movie: Movie) => (
+        <div className="flex items-center gap-2 text-slate-400">
+          <Calendar size={14} />
+          <span>{movie.releaseYear || "—"}</span>
+        </div>
+      )
     },
     {
       key: "duration",
-      label: "Duration",
-      className: "col-span-1",
+      label: "Length",
+      className: "col-span-2",
+      render: (movie: Movie) => (
+        <div className="flex items-center gap-2">
+          <Clock size={14} className="text-slate-500" />
+          <span className="font-medium">{movie.duration || "N/A"}</span>
+        </div>
+      )
     },
     {
       key: "rating",
@@ -113,7 +131,12 @@ export default function ManageMoviesPage() {
       label: "Status",
       className: "col-span-1",
       render: (movie: Movie) => (
-        <span className="px-2 py-1 rounded-full bg-green-500/10 text-green-400 text-xs font-bold">
+        <span className={cn(
+          "px-2 py-1 rounded-full text-xs font-bold",
+          movie.status === "Ongoing" ? "bg-green-500/10 text-green-400" :
+            movie.status === "Completed" ? "bg-blue-500/10 text-blue-400" :
+              "bg-slate-500/10 text-slate-400"
+        )}>
           {movie.status || "Released"}
         </span>
       ),
@@ -159,7 +182,9 @@ export default function ManageMoviesPage() {
           columns={columns}
           loading={loading}
           onDelete={handleDelete}
-          onEdit={(movie) => console.log("Edit movie:", movie)}
+          onEdit={(movie) => {
+            router.push(`/admin/edit/${movie._id}?type=Movie`);
+          }}
           onView={(movie) => window.open(`/anime/${movie._id}`, "_blank")}
           getItemId={(movie) => movie._id}
           getItemTitle={(movie) => movie.title}

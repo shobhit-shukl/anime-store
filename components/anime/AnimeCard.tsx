@@ -85,7 +85,7 @@ export function AnimeCard({
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
-          
+
           {/* Rating */}
           <div className="absolute top-2 right-2">
             <RatingBadge rating={anime.rating} size="sm" />
@@ -171,7 +171,7 @@ export function AnimeCard({
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 66vw, 50vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
-          
+
           {/* Content overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-8">
             <div className="flex items-center gap-3 mb-3">
@@ -228,7 +228,7 @@ export function AnimeCard({
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
-        
+
         {/* Bottom info */}
         <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
           <span className="bg-blue-600 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">
@@ -271,7 +271,7 @@ export function AnimeCard({
           </div>
         )}
       </div>
-      
+
       <div className="p-6">
         <h3 className="font-black text-xl truncate mb-1 tracking-tighter group-hover:text-blue-400 transition-colors uppercase italic">
           {anime.title}

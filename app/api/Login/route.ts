@@ -2,66 +2,66 @@ import { connectDB } from "@/lib/mongodb";
 import VerificationSchema from "@/models/Verification";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import { setSession } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
-    // 1. Extract and sanitize the input
     const { email, password } = await req.json();
-    
-    // Extra server-side safety: trim and lowercase
+
+    // 1. Static Admin Check (Optional: Add Environment Variable Fallback)
+    // For now, we rely on DB, but ensures we only allow admins to even try.
+
     const cleanEmail = email?.trim().toLowerCase();
     const cleanPassword = password?.trim();
 
     if (!cleanEmail || !cleanPassword) {
       return NextResponse.json(
-        { message: "Email and password are required" }, 
+        { message: "Email and password are required" },
         { status: 400 }
       );
     }
 
-    // 2. Connect to the Database
     const conn = await connectDB("auth");
-    if (!conn) {
-      return NextResponse.json(
-        { message: "Database connection failed" },
-        { status: 500 }
-      );
-    }
-
     const Verification = conn.model("Verification", VerificationSchema, "verification");
 
-    // 3. Find the user in the 'verification' collection
     const user = await Verification.findOne({ useremail: cleanEmail });
 
     if (!user) {
       return NextResponse.json(
-        { message: "User not found" }, 
-        { status: 404 }
+        { message: "Invalid credentials" },
+        { status: 401 }
       );
     }
 
-    // 4. Compare the provided password with the password in DB
-    // Check if password is hashed (bcrypt hashes start with $)
+    // STRICT ADMIN CHECK
+    if (user.userrole !== "admin") {
+      return NextResponse.json(
+        { message: "Access denied. Admin only." },
+        { status: 403 }
+      );
+    }
+
+    // Verify Password
     let isMatch;
     if (user.password.startsWith('$')) {
-      // Hashed password
       isMatch = await bcrypt.compare(cleanPassword, user.password);
     } else {
-      // Plain text password (for backward compatibility)
       isMatch = cleanPassword === user.password;
     }
 
     if (!isMatch) {
       return NextResponse.json(
-        { message: "Invalid password" }, 
+        { message: "Invalid credentials" },
         { status: 401 }
       );
     }
 
-    // 5. Success! Return the user role to the frontend
-    return NextResponse.json({ 
-      message: "Login successful", 
-      role: user.userrole 
+    // Success: Set Cookie Session
+    await setSession({ role: "admin", email: user.useremail });
+
+    return NextResponse.json({
+      message: "Login successful",
+      role: "admin"
     }, { status: 200 });
 
   } catch (error: unknown) {

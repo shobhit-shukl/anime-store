@@ -3,34 +3,47 @@
 /* Make dark: classes respond to a .dark class on html/body (Tailwind v4) */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Brand-inspired palette: warm light + deep indigo for contrast with orange logo */
- :root {
-  --background: #fff7ef;
-  --foreground: #0f1720;
+/* Brand-inspired palette: Cinematic Midnight Black + Atomic Blue Accents */
+:root {
+  --background: #020617;
+  /* Deepest Midnight */
+  --foreground: #f8fafc;
+  /* Crisp Slate 50 */
+  --primary: #3b82f6;
+  --secondary: #1e293b;
+  --accent: #60a5fa;
+  --muted: #64748b;
+  --popover: #0f172a;
+  --border: rgba(255, 255, 255, 0.06);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-.dark {
-  --background: #0f1a2f;
-  --foreground: #e5e7eb;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: #0f1a2f;
-    --foreground: #e5e7eb;
-  }
+/* Force dark variant always (for Tailwind dark: utility) */
+.dark,
+:root {
+  --background: #020617;
+  --foreground: #f8fafc;
 }
 
 body {
   background: var(--background);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(147, 51, 234, 0.05) 0px, transparent 50%);
+  background-attachment: fixed;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  transition: background 0.3s ease, color 0.3s ease;
+  font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
+  transition: background 0.5s ease, color 0.5s ease;
+  -webkit-font-smoothing: antialiased;
 }
