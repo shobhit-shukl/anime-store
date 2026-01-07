@@ -3,7 +3,7 @@
 import React, { useState, ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Film,
@@ -51,6 +51,7 @@ const sidebarLinks = [
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -58,6 +59,15 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   React.useLayoutEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+      router.push("/login"); // Redirect to admin login
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
 
   if (!mounted) {
     return null;
@@ -76,11 +86,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           {/* Logo */}
           <div className="p-6 border-b border-slate-200 dark:border-white/5 transition-colors">
             <Link href="/admin" className="flex items-center gap-2">
-              <Image 
-                src="/Slice Meow Final-log.png" 
-                alt="Slice Meow" 
-                width={120} 
-                height={40} 
+              <Image
+                src="/Slice Meow Final-log.png"
+                alt="Slice Meow"
+                width={120}
+                height={40}
                 className="h-8 w-auto object-contain"
               />
               <span className="text-[10px] px-2 py-0.5 bg-blue-600 rounded-full font-bold uppercase">
@@ -124,7 +134,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 <p className="text-xs text-slate-500 dark:text-slate-500 truncate">admin@slicemeow.com</p>
               </div>
             </div>
-            <button className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 transition-colors">
+            <button
+              onClick={handleLogout}
+              className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-500/10 transition-colors"
+            >
               <LogOut size={18} />
               <span className="font-medium">Logout</span>
             </button>
@@ -159,7 +172,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
           <div className="flex items-center gap-4">
             <Link
-              href="/UserPage"
+              href="/"
+              target="_blank"
               className="text-sm text-slate-400 hover:text-white transition-colors"
             >
               View Site →
@@ -175,3 +189,4 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 }
 
 export default AdminLayout;
+

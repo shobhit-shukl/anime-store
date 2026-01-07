@@ -5,11 +5,14 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { title, description } = body;
+    const { title, description, synopsis, genres, genre, releaseYear } = body;
 
-    if (!title || !description) {
+    const finalTitle = title;
+    const finalDescription = description || synopsis || ""; // Handle both names or empty
+
+    if (!finalTitle) {
       return NextResponse.json(
-        { message: "Title and description are required" },
+        { message: "Title is required" },
         { status: 400 }
       );
     }
@@ -24,8 +27,19 @@ export async function POST(req: Request) {
 
     const Movie = conn.model("Movie", MovieSchema, "movies");
 
-    const newMovie = new Movie(body);
+    // Clean up body before creating model
+    const movieData = {
+      ...body,
+      title: finalTitle,
+      description: finalDescription,
+      releaseYear: releaseYear ? Number(releaseYear) : undefined,
+      genre: genre || genres || [], // Map genres to genre
+      type: "Movie",
+      format: "Standalone",
+      seasons: [], // Standalone movies have no seasons
+    };
 
+    const newMovie = new Movie(movieData);
     await newMovie.save();
 
     return NextResponse.json(
@@ -33,10 +47,10 @@ export async function POST(req: Request) {
       { status: 201 }
     );
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Movie creation error:", error);
     return NextResponse.json(
-      { message: "Internal server error" },
+      { message: error.message || "Internal server error" },
       { status: 500 }
     );
   }
@@ -86,8 +100,11 @@ export async function DELETE(req: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
     const conn = await connectDB("movies");
     if (!conn) {
       return NextResponse.json(
@@ -98,8 +115,13 @@ export async function GET() {
 
     const Movie = conn.model("Movie", MovieSchema, "movies");
 
-    const movies = await Movie.find({}).sort({ createdAt: -1 });
+    if (id) {
+      const movie = await Movie.findById(id);
+      if (!movie) return NextResponse.json({ message: "Movie not found" }, { status: 404 });
+      return NextResponse.json({ movie }, { status: 200 });
+    }
 
+    const movies = await Movie.find({}).sort({ createdAt: -1 });
     return NextResponse.json({ movies }, { status: 200 });
 
   } catch (error) {
@@ -108,5 +130,43 @@ export async function GET() {
       { message: "Internal server error" },
       { status: 500 }
     );
+  }
+}
+
+export async function PUT(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    const body = await req.json();
+
+    if (!id) {
+      return NextResponse.json({ message: "Movie ID is required" }, { status: 400 });
+    }
+
+    const conn = await connectDB("movies");
+    const Movie = conn.model("Movie", MovieSchema, "movies");
+
+    const { genres, genre, releaseYear, synopsis, description } = body;
+    const movieData = {
+      ...body,
+      description: description || synopsis || body.description,
+      genre: genre || genres || body.genre,
+      releaseYear: releaseYear ? Number(releaseYear) : body.releaseYear,
+      type: "Movie",
+      format: "Standalone",
+      seasons: [], // Strictly no seasons for standalone movies
+    };
+
+    const updatedMovie = await Movie.findByIdAndUpdate(id, movieData, { new: true });
+
+    if (!updatedMovie) {
+      return NextResponse.json({ message: "Movie not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Movie updated successfully", movie: updatedMovie }, { status: 200 });
+
+  } catch (error: any) {
+    console.error("Movie update error:", error);
+    return NextResponse.json({ message: error.message || "Internal server error" }, { status: 500 });
   }
 }

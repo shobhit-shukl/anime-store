@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AdminLayout, AdminTable } from "@/components/admin";
 import { Plus, Search, Tv } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 interface Season {
   seasonNumber: number;
@@ -17,12 +19,16 @@ interface Series {
   title: string;
   description?: string;
   image?: string;
+  genre?: string[];
   genres?: string[];
   status?: string;
   seasons?: Season[];
+  type?: string;
+  format?: 'Standalone' | 'Episodic';
 }
 
 export default function ManageSeriesPage() {
+  const router = useRouter();
   const [series, setSeries] = useState<Series[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,7 +42,7 @@ export default function ManageSeriesPage() {
       const res = await fetch("/api/webseries");
       if (res.ok) {
         const data = await res.json();
-        setSeries(data.series || []);
+        setSeries(data.webseries || []);
       }
     } catch (error) {
       console.error("Failed to fetch series:", error);
@@ -86,8 +92,13 @@ export default function ManageSeriesPage() {
       label: "Title",
       className: "col-span-3",
       render: (item: Series) => (
-        <div>
-          <p className="font-bold truncate">{item.title}</p>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="px-1.5 py-0.5 rounded-md bg-white/10 text-[10px] font-black uppercase tracking-tight text-slate-400 border border-white/5">
+              {item.type || "TV"}
+            </span>
+            <p className="font-bold truncate">{item.title}</p>
+          </div>
           <p className="text-xs text-slate-500 truncate">{item.description?.slice(0, 50) || "No description"}...</p>
         </div>
       ),
@@ -114,18 +125,23 @@ export default function ManageSeriesPage() {
       key: "genres",
       label: "Genres",
       className: "col-span-2",
-      render: (item: Series) => (
-        <div className="flex flex-wrap gap-1">
-          {item.genres?.slice(0, 2).map((genre) => (
-            <span
-              key={genre}
-              className="px-2 py-0.5 rounded-full bg-white/5 text-slate-400 text-xs"
-            >
-              {genre}
-            </span>
-          )) || <span className="text-slate-500">—</span>}
-        </div>
-      ),
+      render: (item: Series) => {
+        const displayGenres = item.genres || item.genre || [];
+        return (
+          <div className="flex flex-wrap gap-1">
+            {displayGenres.slice(0, 2).map((genre) => (
+              <span
+                key={genre}
+                className="px-2 py-0.5 rounded-full bg-white/5 text-slate-400 text-xs"
+              >
+                {genre}
+              </span>
+            ))}
+            {displayGenres.length > 2 && <span className="text-xs text-slate-500">+{displayGenres.length - 2}</span>}
+            {displayGenres.length === 0 && <span className="text-slate-500">—</span>}
+          </div>
+        );
+      },
     },
     {
       key: "status",
@@ -133,13 +149,14 @@ export default function ManageSeriesPage() {
       className: "col-span-1",
       render: (item: Series) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs font-bold ${
+          className={cn(
+            "px-2 py-1 rounded-full text-xs font-bold",
             item.status === "Ongoing"
               ? "bg-green-500/10 text-green-400"
               : item.status === "Completed"
-              ? "bg-blue-500/10 text-blue-400"
-              : "bg-yellow-500/10 text-yellow-400"
-          }`}
+                ? "bg-blue-500/10 text-blue-400"
+                : "bg-yellow-500/10 text-yellow-400"
+          )}
         >
           {item.status || "Unknown"}
         </span>
@@ -186,7 +203,9 @@ export default function ManageSeriesPage() {
           columns={columns}
           loading={loading}
           onDelete={handleDelete}
-          onEdit={(item) => console.log("Edit series:", item)}
+          onEdit={(item) => {
+            router.push(`/admin/edit/${item._id}?type=TV`);
+          }}
           onView={(item) => window.open(`/anime/${item._id}`, "_blank")}
           getItemId={(item) => item._id}
           getItemTitle={(item) => item.title}

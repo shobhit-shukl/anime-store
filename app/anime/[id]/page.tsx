@@ -52,6 +52,7 @@ interface AnimeDetail {
   image?: string;
   bannerImage?: string;
   seasons?: Season[];
+  format?: 'Standalone' | 'Episodic';
   externalLinks?: { platform: string; url: string }[];
 }
 
@@ -78,32 +79,34 @@ export default function AnimeDetailPage() {
   useEffect(() => {
     async function fetchAnime() {
       try {
-        // Try to fetch from movies first
-        const movieRes = await fetch("/api/movie");
-        const movieData = movieRes.ok ? await movieRes.json() : { movies: [] };
-        const movie = movieData.movies?.find((m: AnimeDetail) => m._id === id);
+        // Try to fetch from movies first (Standalone)
+        const movieRes = await fetch(`/api/movie?id=${id}`);
+        if (movieRes.ok) {
+          const data = await movieRes.json();
+          if (data.movie) {
+            setAnime(data.movie);
+            // Fetch some similar movies (optional optimization: dedicated similar API)
+            const listRes = await fetch("/api/movie");
+            if (listRes.ok) {
+              const listData = await listRes.json();
+              setSimilar(listData.movies?.filter((m: any) => m._id !== id).slice(0, 6) || []);
+            }
+            return;
+          }
+        }
 
-        if (movie) {
-          setAnime({ ...movie, type: "Movie" });
-          // Get similar movies
-          setSimilar(
-            movieData.movies
-              ?.filter((m: AnimeDetail) => m._id !== id)
-              .slice(0, 6) || []
-          );
-        } else {
-          // Try series
-          const seriesRes = await fetch("/api/webseries");
-          const seriesData = seriesRes.ok ? await seriesRes.json() : { series: [] };
-          const series = seriesData.series?.find((s: AnimeDetail) => s._id === id);
-
-          if (series) {
-            setAnime({ ...series, type: "TV" });
-            setSimilar(
-              seriesData.series
-                ?.filter((s: AnimeDetail) => s._id !== id)
-                .slice(0, 6) || []
-            );
+        // Try series (Episodic)
+        const seriesRes = await fetch(`/api/webseries?id=${id}`);
+        if (seriesRes.ok) {
+          const data = await seriesRes.json();
+          if (data.webseries) {
+            setAnime(data.webseries);
+            // Fetch some similar series
+            const listRes = await fetch("/api/webseries");
+            if (listRes.ok) {
+              const listData = await listRes.json();
+              setSimilar(listData.webseries?.filter((s: any) => s._id !== id).slice(0, 6) || []);
+            }
           }
         }
       } catch (error) {
@@ -146,7 +149,7 @@ export default function AnimeDetailPage() {
     );
   }
 
-  const isMovie = anime.type === "Movie";
+  const isStandalone = anime.format === "Standalone";
   const synopsis = anime.description || anime.synopsis || "No synopsis available.";
   const totalEpisodes = anime.seasons?.reduce(
     (acc, s) => acc + (s.episodes?.length || 0),
@@ -204,7 +207,7 @@ export default function AnimeDetailPage() {
               <div className="mt-4 flex gap-3">
                 <Button className="flex-1" size="lg">
                   <Play size={20} className="mr-2" fill="currentColor" />
-                  {isMovie ? "Watch Now" : "Start Watching"}
+                  {isStandalone ? "Watch Now" : "Start Watching"}
                 </Button>
               </div>
               <div className="mt-3 grid grid-cols-3 gap-3">
@@ -271,7 +274,7 @@ export default function AnimeDetailPage() {
                     {anime.duration}
                   </span>
                 )}
-                {!isMovie && anime.seasons && (
+                {!isStandalone && anime.seasons && (
                   <span className="text-slate-400">
                     {anime.seasons.length} Season{anime.seasons.length !== 1 ? "s" : ""} •{" "}
                     {totalEpisodes} Episodes
@@ -306,15 +309,15 @@ export default function AnimeDetailPage() {
             </div>
 
             {/* Tabs for Episodes/Info */}
-            <Tabs defaultValue={isMovie ? "info" : "episodes"} className="space-y-6">
+            <Tabs defaultValue={isStandalone ? "info" : "episodes"} className="space-y-6">
               <TabsList>
-                {!isMovie && <TabsTrigger value="episodes">Episodes</TabsTrigger>}
+                {!isStandalone && <TabsTrigger value="episodes">Episodes</TabsTrigger>}
                 <TabsTrigger value="info">Information</TabsTrigger>
                 <TabsTrigger value="streaming">Where to Watch</TabsTrigger>
               </TabsList>
 
               {/* Episodes Tab */}
-              {!isMovie && (
+              {!isStandalone && (
                 <TabsContent value="episodes" className="space-y-6">
                   {/* Season Selector */}
                   {anime.seasons && anime.seasons.length > 1 && (
@@ -370,10 +373,10 @@ export default function AnimeDetailPage() {
                           />
                         </Link>
                       )) || (
-                      <p className="text-center text-slate-500 py-8">
-                        No episodes available for this season.
-                      </p>
-                    )}
+                        <p className="text-center text-slate-500 py-8">
+                          No episodes available for this season.
+                        </p>
+                      )}
                   </div>
                 </TabsContent>
               )}
@@ -385,7 +388,7 @@ export default function AnimeDetailPage() {
                   <InfoItem label="Status" value={anime.status || "—"} />
                   <InfoItem label="Release Year" value={anime.releaseYear || "—"} />
                   <InfoItem label="Duration" value={anime.duration || "—"} />
-                  {!isMovie && (
+                  {!isStandalone && (
                     <>
                       <InfoItem
                         label="Seasons"

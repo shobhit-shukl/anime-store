@@ -86,7 +86,7 @@ export function AnimeRow({
             )}
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {/* Scroll buttons */}
           {animeList.length > 4 && (
@@ -117,7 +117,7 @@ export function AnimeRow({
               </button>
             </>
           )}
-          
+
           {showViewAll && (
             <button
               onClick={onViewAll}
