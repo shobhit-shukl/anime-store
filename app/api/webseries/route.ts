@@ -96,16 +96,21 @@ export async function PUT(req: Request) {
     const conn = await connectDB("webseries");
     const WebSeries = conn.model("WebSeries", MovieSchema, "webseries");
 
-    const { synopsis, description, genres, genre } = body;
-    const seriesData = {
-      ...body,
-      type: body.type === "Movie" ? "TV" : (body.type || "TV"),
-      format: "Episodic",
-      description: description || synopsis || body.description,
-      genre: genre || genres || body.genre,
-    };
+    // Build an update object only with provided fields so toggles and partial updates work
+    const update: Record<string, any> = {};
+    if (body.title !== undefined) update.title = body.title;
+    if (body.seasons !== undefined) update.seasons = body.seasons;
+    if (body.synopsis !== undefined) update.synopsis = body.synopsis;
+    if (body.description !== undefined) update.description = body.description;
+    if (body.genres !== undefined) update.genres = body.genres;
+    if (body.genre !== undefined) update.genre = body.genre;
+    if (body.type !== undefined) update.type = body.type === "Movie" ? "TV" : body.type;
+    if (body.format !== undefined) update.format = body.format;
+    if (body.showInHero !== undefined) update.showInHero = body.showInHero;
+    if (body.image !== undefined) update.image = body.image;
+    if (body.bannerImage !== undefined) update.bannerImage = body.bannerImage;
 
-    const updatedSeries = await WebSeries.findByIdAndUpdate(id, seriesData, { new: true });
+    const updatedSeries = await WebSeries.findByIdAndUpdate(id, { $set: update }, { new: true });
 
     if (!updatedSeries) {
       return NextResponse.json({ message: "Series not found" }, { status: 404 });

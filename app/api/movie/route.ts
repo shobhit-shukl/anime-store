@@ -170,3 +170,39 @@ export async function PUT(req: Request) {
     return NextResponse.json({ message: error.message || "Internal server error" }, { status: 500 });
   }
 }
+
+export async function PATCH(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    const body = await req.json();
+
+    if (!id) {
+      return NextResponse.json({ message: "Movie ID is required" }, { status: 400 });
+    }
+
+    const conn = await connectDB("movies");
+    const Movie = conn.model("Movie", MovieSchema, "movies");
+
+    // Only allow updating fields that are safe; here we support showInHero and any others provided
+    const updateData: Record<string, unknown> = {};
+    if (typeof body.showInHero === "boolean") updateData.showInHero = body.showInHero;
+
+    // If no recognized fields, return bad request
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ message: "No valid fields to update" }, { status: 400 });
+    }
+
+    const updatedMovie = await Movie.findByIdAndUpdate(id, updateData, { new: true });
+
+    if (!updatedMovie) {
+      return NextResponse.json({ message: "Movie not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Movie updated successfully", movie: updatedMovie }, { status: 200 });
+
+  } catch (error: any) {
+    console.error("Movie patch error:", error);
+    return NextResponse.json({ message: error.message || "Internal server error" }, { status: 500 });
+  }
+}

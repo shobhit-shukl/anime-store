@@ -39,6 +39,7 @@ const MovieSchema = new Schema({
     platform: String,
     url: String
   }],
+  showInHero: { type: Boolean, default: true },
 }, {
   timestamps: true,
 });

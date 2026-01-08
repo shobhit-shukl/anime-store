@@ -6,6 +6,7 @@ import { Play, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navbar, Footer } from "@/components/layout";
 import { AnimeRow, GenrePill, RatingBadge } from "@/components/anime";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { HeroSkeleton, AnimeRowSkeleton } from "@/components/ui/skeleton";
 import { SearchBar, SearchModal } from "@/components/layout/SearchModal";
 import { type Anime, type Movie, ANIME_GENRES } from "@/types/anime";
@@ -23,9 +24,10 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
     const [webseries] = useState<AnimeData[]>(initialWebseries);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [selectedAnime, setSelectedAnime] = useState<AnimeData | null>(null);
 
-    // Combine for featured carousel
-    const featuredAnime = [...movies, ...webseries].slice(0, 5);
+    // Combine for featured carousel and filter by showInHero flag
+    const featuredAnime = [...movies, ...webseries].filter(item => item.showInHero !== false).slice(0, 5);
 
     // Loading state removed as data is passed from server. 
     // If you want a loading state while hydrating, you can use one, but usually not needed.
@@ -43,7 +45,7 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
     const currentFeatured = featuredAnime[currentSlide];
 
     const handleAnimeSelect = (anime: AnimeData) => {
-        console.log("Selected:", anime);
+        setSelectedAnime(anime);
     };
 
     return (
@@ -296,6 +298,43 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
             </div>
 
             <Footer />
+
+            {/* Details dialog for selected anime */}
+            <Dialog open={!!selectedAnime} onOpenChange={() => setSelectedAnime(null)}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{selectedAnime?.title}</DialogTitle>
+                        <DialogDescription>{selectedAnime?.titleJapanese}</DialogDescription>
+                    </DialogHeader>
+
+                    <div className="mt-4">
+                        {selectedAnime && (
+                            <img
+                                src={selectedAnime.bannerImage || selectedAnime.posterImage || selectedAnime.image || "/placeholder-anime.svg"}
+                                alt={selectedAnime.title}
+                                className="w-full h-64 object-cover rounded-md mb-4"
+                            />
+                        )}
+
+                        <div className="text-sm text-slate-400 space-y-2">
+                            <p>{selectedAnime?.synopsis || selectedAnime?.description || "No description available."}</p>
+                            <p><strong>Type:</strong> {selectedAnime?.type || (selectedAnime && (selectedAnime as any).duration ? 'Movie' : 'TV')}</p>
+                            {selectedAnime && (selectedAnime as any).duration && (
+                                <p><strong>Duration:</strong> {(selectedAnime as any).duration}</p>
+                            )}
+                            {selectedAnime && (selectedAnime as any).releaseYear && (
+                                <p><strong>Year:</strong> {(selectedAnime as any).releaseYear}</p>
+                            )}
+                            <p><strong>Genres:</strong> {(selectedAnime?.genres || selectedAnime?.genre || []).join(", ") || "—"}</p>
+                        </div>
+                    </div>
+
+                    <DialogFooter>
+                        <Button onClick={() => selectedAnime && (window.location.href = `/anime/${(selectedAnime as any)._id || (selectedAnime as any).id}`)}>Open Page</Button>
+                        <Button variant="ghost" onClick={() => setSelectedAnime(null)}>Close</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             {/* Search Modal */}
             <SearchModal

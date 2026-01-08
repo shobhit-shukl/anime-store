@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { AdminLayout, AdminTable } from "@/components/admin";
 import { Plus, Search, Tv } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -25,11 +26,13 @@ interface Series {
   seasons?: Season[];
   type?: string;
   format?: 'Standalone' | 'Episodic';
+  showInHero?: boolean;
 }
 
 export default function ManageSeriesPage() {
   const router = useRouter();
   const [series, setSeries] = useState<Series[]>([]);
+  const [viewItem, setViewItem] = useState<Series | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -68,10 +71,27 @@ export default function ManageSeriesPage() {
     return s.seasons?.reduce((acc, season) => acc + (season.episodes?.length || 0), 0) || 0;
   };
 
+  const handleToggleShowInHero = async (item: Series, value: boolean) => {
+    try {
+      const res = await fetch(`/api/webseries?id=${item._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ showInHero: value }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const updated = data.webseries || data.series;
+        setSeries((prev) => prev.map((s) => (s._id === item._id ? { ...s, showInHero: updated?.showInHero ?? value } : s)));
+      }
+    } catch (error) {
+      console.error("Failed to update showInHero:", error);
+    }
+  };
+
   const filteredSeries = series.filter((s) =>
     s.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
   const columns = [
     {
       key: "image",
@@ -162,6 +182,25 @@ export default function ManageSeriesPage() {
         </span>
       ),
     },
+    {
+      key: "feature",
+      label: "Feature",
+      className: "col-span-1",
+      render: (item: Series) => (
+        <div className="flex items-center justify-start">
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              className="sr-only peer"
+              checked={item.showInHero !== false}
+              onChange={(e) => handleToggleShowInHero(item, e.target.checked)}
+            />
+            <span className="w-10 h-6 bg-white/5 rounded-full peer-checked:bg-blue-600 peer-focus:ring-2 peer-focus:ring-blue-400 transition-colors"></span>
+            <span className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transform peer-checked:translate-x-4 transition-transform shadow-sm" />
+          </label>
+        </div>
+      ),
+    },
   ];
 
   return (
@@ -206,11 +245,48 @@ export default function ManageSeriesPage() {
           onEdit={(item) => {
             router.push(`/admin/edit/${item._id}?type=TV`);
           }}
-          onView={(item) => window.open(`/anime/${item._id}`, "_blank")}
+          onView={(item) => setViewItem(item)}
           getItemId={(item) => item._id}
           getItemTitle={(item) => item.title}
           emptyMessage="No series found. Add your first series!"
         />
+
+        {/* Details dialog */}
+        <Dialog open={!!viewItem} onOpenChange={() => setViewItem(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{viewItem?.title}</DialogTitle>
+              <DialogDescription>{viewItem?.description}</DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-4">
+              {viewItem?.image && (
+                <img src={viewItem.image} alt={viewItem.title} className="w-full h-48 object-cover rounded-md mb-4" />
+              )}
+
+              <div className="text-sm text-slate-400 space-y-2">
+                <div><strong>Seasons:</strong> {viewItem?.seasons?.length || 0}</div>
+                <div><strong>Total Episodes:</strong> {viewItem ? viewItem.seasons?.reduce((acc, s) => acc + (s.episodes?.length || 0), 0) : 0}</div>
+                <div><strong>Genres:</strong> {(viewItem?.genres || viewItem?.genre || []).join(", ") || "—"}</div>
+              </div>
+
+              {viewItem?.seasons && viewItem.seasons.length > 0 && (
+                <div className="mt-4 space-y-2">
+                  {viewItem.seasons.map((s) => (
+                    <div key={s.seasonNumber} className="p-3 bg-white/5 rounded-md">
+                      <div className="font-bold">Season {s.seasonNumber}</div>
+                      <div className="text-sm text-slate-400">Episodes: {s.episodes?.length || 0}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <DialogFooter>
+              <Button onClick={() => setViewItem(null)}>Close</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { AdminLayout, AdminTable } from "@/components/admin";
 import { Plus, Search, Film, Clock, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -22,11 +23,13 @@ interface Movie {
   status?: string;
   type?: string;
   format?: 'Standalone' | 'Episodic';
+  showInHero?: boolean;
 }
 
 export default function ManageMoviesPage() {
   const router = useRouter();
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [viewItem, setViewItem] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -141,6 +144,36 @@ export default function ManageMoviesPage() {
         </span>
       ),
     },
+    {
+      key: "feature",
+      label: "Feature",
+      className: "col-span-1",
+      render: (movie: Movie) => (
+        <label className="relative inline-flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            className="sr-only peer"
+            checked={movie.showInHero !== false}
+            onChange={async (e) => {
+              const checked = e.target.checked;
+              setMovies((prev) => prev.map((m) => m._id === movie._id ? { ...m, showInHero: checked } : m));
+              try {
+                await fetch(`/api/movie?id=${movie._id}`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ showInHero: checked }),
+                });
+              } catch (err) {
+                console.error("Failed to update showInHero", err);
+                setMovies((prev) => prev.map((m) => m._id === movie._id ? { ...m, showInHero: !checked } : m));
+              }
+            }}
+          />
+          <span className="w-10 h-6 bg-white/5 rounded-full peer-checked:bg-blue-600 peer-focus:ring-2 peer-focus:ring-blue-400 transition-colors"></span>
+          <span className="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transform peer-checked:translate-x-4 transition-transform shadow-sm" />
+        </label>
+      ),
+    },
   ];
 
   return (
@@ -185,11 +218,38 @@ export default function ManageMoviesPage() {
           onEdit={(movie) => {
             router.push(`/admin/edit/${movie._id}?type=Movie`);
           }}
-          onView={(movie) => window.open(`/anime/${movie._id}`, "_blank")}
+          onView={(movie) => setViewItem(movie)}
           getItemId={(movie) => movie._id}
           getItemTitle={(movie) => movie.title}
           emptyMessage="No movies found. Add your first movie!"
         />
+
+        {/* Details dialog */}
+        <Dialog open={!!viewItem} onOpenChange={() => setViewItem(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{viewItem?.title}</DialogTitle>
+              <DialogDescription>{viewItem?.description}</DialogDescription>
+            </DialogHeader>
+
+            <div className="mt-4">
+              {viewItem?.image && (
+                <img src={viewItem.image} alt={viewItem.title} className="w-full h-48 object-cover rounded-md mb-4" />
+              )}
+
+              <div className="text-sm text-slate-400 space-y-2">
+                <div><strong>Duration:</strong> {viewItem?.duration || "N/A"}</div>
+                <div><strong>Year:</strong> {viewItem?.releaseYear || "—"}</div>
+                <div><strong>Genres:</strong> {(viewItem?.genres || viewItem?.genre || []).join(", ") || "—"}</div>
+                <div><strong>Rating:</strong> {viewItem?.rating ?? "—"}</div>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button onClick={() => setViewItem(null)}>Close</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </AdminLayout>
   );
