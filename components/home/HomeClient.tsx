@@ -215,84 +215,123 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
                 </section>
             )}
 
-            {/* Content sections */}
-            <div className="max-w-7xl mx-auto px-6 space-y-4 pb-20">
-                <>
-                    {/* Trending Section */}
+            {/* Content sections based on Visual Wireframe Structure */}
+            <div className="space-y-16 pb-20">
+
+                {/* [ SUPPORT THE INDIAN ANIME MOVEMENT ] */}
+                <section className="relative py-20 px-6 bg-gradient-to-r from-orange-600/10 via-slate-900 to-slate-950 border-y border-white/5 overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay"></div>
+                    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
+                        <div className="flex-1 space-y-6 text-center md:text-left">
+                            <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase text-orange-500 drop-shadow-[0_2px_10px_rgba(249,115,22,0.3)]">
+                                Support The Indian<br />Anime Movement
+                            </h2>
+                            <p className="text-lg text-slate-400 max-w-xl mx-auto md:mx-0">
+                                Join the revolution. We are building the largest community of anime fans in India. Be part of the change.
+                            </p>
+                            <Button
+                                size="xl"
+                                className="bg-orange-600 hover:bg-orange-500 text-white font-black uppercase tracking-widest shadow-[0_0_20px_rgba(234,88,12,0.4)]"
+                                onClick={() => window.location.href = '/community'}
+                            >
+                                Join Community
+                            </Button>
+                        </div>
+                        <div className="flex-1 w-full max-w-md">
+                            <div className="aspect-video rounded-2xl overflow-hidden bg-slate-800 border border-white/10 shadow-2xl relative group cursor-pointer hover:scale-105 transition-transform duration-500">
+                                <Image
+                                    src="/placeholder-anime.svg"
+                                    alt="Community"
+                                    fill
+                                    className="object-cover opacity-60 group-hover:opacity-80 transition-opacity"
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center">
+                                        <Play fill="currentColor" className="text-white ml-1" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div className="max-w-7xl mx-auto px-6 space-y-20">
+
+                    {/* [ COMMUNITY VOICE ] */}
+                    <section>
+                        <h2 className="text-2xl font-black uppercase tracking-widest mb-8 flex items-center gap-3">
+                            <span className="w-2 h-8 bg-blue-500 rounded-full"></span>
+                            Community Voice
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className="bg-slate-900/50 border border-white/5 p-6 rounded-2xl hover:border-blue-500/30 transition-colors">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center">
+                                            <span className="font-bold text-slate-500">U{i}</span>
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-sm text-slate-200">AnimeFan_{i}</p>
+                                            <p className="text-xs text-slate-500">2 hours ago</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-slate-400 text-sm leading-relaxed">
+                                        "Finally a platform that understands what Indian anime fans need! The streaming quality is insane and the collection is growing fast."
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    {/* [ TRENDING WORLDS ] - Horizontal Cards */}
                     {webseries.length > 0 && (
                         <AnimeRow
-                            title="Trending Now"
-                            subtitle="Most watched this week"
+                            title="Trending Worlds"
+                            subtitle="Top IPs dominating the charts"
                             animeList={webseries}
+                            variant="horizontal"
                             onAnimeSelect={handleAnimeSelect}
                             accentColor="purple"
                         />
                     )}
 
-                    {/* Movies Section */}
-                    {movies.length > 0 && (
-                        <AnimeRow
-                            title="Movies"
-                            subtitle="Feature-length anime films"
-                            animeList={movies}
-                            onAnimeSelect={handleAnimeSelect}
-                            accentColor="blue"
-                            showViewAll
-                            onViewAll={() => console.log("View all movies")}
-                        />
-                    )}
-
-                    {/* Web Series Section */}
-                    {webseries.length > 0 && (
-                        <AnimeRow
-                            title="Web Series"
-                            subtitle="Episodic content for binge watching"
-                            animeList={webseries}
-                            onAnimeSelect={handleAnimeSelect}
-                            accentColor="green"
-                            showViewAll
-                        />
-                    )}
-
-                    {/* Genre Quick Access */}
-                    <section className="py-12">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="h-10 w-2 bg-pink-600 rounded-full shadow-[0_0_15px_rgba(219,39,119,0.5)]" />
-                            <div>
-                                <h2 className="text-2xl md:text-3xl font-black tracking-tighter uppercase">
-                                    Browse by Genre
-                                </h2>
-                                <p className="text-sm text-slate-500 mt-0.5">
-                                    Find anime by your favorite categories
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-wrap gap-3">
-                            {ANIME_GENRES.map((genre) => (
-                                <GenrePill
-                                    key={genre}
-                                    genre={genre}
-                                    size="lg"
-                                    variant="outline"
-                                    onClick={() => console.log(`Browse ${genre}`)}
-                                />
+                    {/* [ SLICE MEOW ORIGINALS ] */}
+                    <section>
+                        <h2 className="text-2xl font-black uppercase tracking-widest mb-8 flex items-center gap-3">
+                            <span className="w-2 h-8 bg-pink-500 rounded-full"></span>
+                            Slice Meow Originals
+                        </h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="group relative aspect-[9/16] rounded-xl overflow-hidden bg-slate-900 cursor-pointer">
+                                    <Image
+                                        src={`/placeholder-anime.svg`}
+                                        alt="Original Content"
+                                        fill
+                                        className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
+                                        <p className="font-bold text-white text-sm line-clamp-2">Behind the scenes of India's Anime Revolution #{i}</p>
+                                        <div className="flex items-center gap-2 mt-2 text-xs text-slate-400">
+                                            <Play size={12} fill="currentColor" />
+                                            <span>2.4k views</span>
+                                        </div>
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     </section>
 
-                    {/* Recently Added */}
+                    {/* Recently Added (Bonus, keep it subtle) */}
                     {[...movies, ...webseries].length > 0 && (
                         <AnimeRow
-                            title="Recently Added"
-                            subtitle="Fresh content just for you"
+                            title="Latest Arrivals"
                             animeList={[...movies, ...webseries].slice(0, 10)}
                             variant="compact"
                             onAnimeSelect={handleAnimeSelect}
-                            accentColor="orange"
                         />
                     )}
-                </>
+                </div>
             </div>
 
             <Footer />
