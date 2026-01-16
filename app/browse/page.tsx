@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Grid, List, SlidersHorizontal, X } from "lucide-react";
 import { Navbar, Footer } from "@/components/layout";
@@ -26,7 +26,7 @@ import {
 
 type AnimeData = Anime | Movie;
 
-export default function BrowsePage() {
+function BrowseContent() {
   const [allAnime, setAllAnime] = useState<AnimeData[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -548,5 +548,13 @@ export default function BrowsePage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function BrowsePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[--background] text-[--foreground]">Loading...</div>}>
+      <BrowseContent />
+    </Suspense>
   );
 }

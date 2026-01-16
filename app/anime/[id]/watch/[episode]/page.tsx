@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, Play } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
-export default function WatchPage() {
+function WatchContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const id = params.id as string;
@@ -42,5 +42,13 @@ export default function WatchPage() {
       
       <Footer />
     </div>
+  );
+}
+
+export default function WatchPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[--background] text-[--foreground] pb-20 transition-colors"><Navbar /><div className="pt-24 max-w-7xl mx-auto px-4"><p>Loading video...</p></div><Footer /></div>}>
+      <WatchContent />
+    </Suspense>
   );
 }
