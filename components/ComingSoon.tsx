@@ -31,14 +31,12 @@ export default function ComingSoon({
 
   // Detect mobile device
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
+    const media = window.matchMedia('(max-width: 767px)');
+    const update = () => setIsMobile(media.matches);
+
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
   }, []);
 
   // Load animation data as fallback (use appropriate animation based on device)
@@ -74,6 +72,8 @@ export default function ComingSoon({
     };
   }, [isVideoLoaded]);
 
+  
+
   const handleVideoLoaded = () => {
     setIsVideoLoaded(true);
     if (loadingTimeoutRef.current) {
@@ -86,10 +86,12 @@ export default function ComingSoon({
     setShowFallback(true);
   };
 
-  const videoUrl = isMobile ? mobileVideoUrl : webBannerUrl;
+  if (isMobile === null) {
+    return <div className="w-full h-dvh bg-black" />;
+  }
 
   return (
-    <div className="relative w-full h-[100dvh] overflow-hidden bg-black">
+    <div className="relative w-full h-dvh overflow-hidden bg-black">
       {/* Video Layer */}
       {!showFallback && (
         <video
@@ -105,7 +107,8 @@ export default function ComingSoon({
           onLoadedData={handleVideoLoaded}
           onError={handleVideoError}
         >
-          <source src={videoUrl} type="video/mp4" />
+          <source src={mobileVideoUrl} type="video/mp4" media="(max-width: 767px)" />
+          <source src={webBannerUrl} type="video/mp4" />
         </video>
       )}
 
