@@ -66,12 +66,7 @@ export function CommunityVoice() {
                                 <button className="flex items-center gap-2 hover:text-red-400 transition-colors group/btn">
                                     <Heart size={16} className="group-hover/btn:fill-current" /> {voice.likes}
                                 </button>
-                                <button className="flex items-center gap-2 hover:text-blue-400 transition-colors">
-                                    <MessageCircle size={16} /> Reply
-                                </button>
-                                <button className="flex items-center gap-2 hover:text-green-400 transition-colors ml-auto">
-                                    <Share2 size={16} />
-                                </button>
+
                             </div>
                         </div>
                     ))}

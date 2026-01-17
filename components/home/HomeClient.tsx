@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Play, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import { Navbar, Footer } from "@/components/layout";
 import { AnimeRow, GenrePill, RatingBadge } from "@/components/anime";
@@ -26,6 +27,7 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
     const [webseries] = useState<AnimeData[]>(initialWebseries);
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const router = useRouter();
 
     // Combine for featured carousel
     const featuredAnime = [...movies, ...webseries].slice(0, 5);
@@ -47,6 +49,12 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
 
     const handleAnimeSelect = (anime: AnimeData) => {
         console.log("Selected:", anime);
+    };
+
+    const originalsRef = React.useRef<HTMLDivElement>(null);
+
+    const scrollToOriginals = () => {
+        originalsRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     return (
@@ -121,15 +129,20 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
 
                                 {/* CTA Buttons */}
                                 <div className="flex gap-4 pt-4">
-                                    <Button
+                                    {/* <Button
                                         size="xl"
                                         className="gap-3 bg-blue-600 hover:bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,0.5)] transition-all"
                                         onClick={() => window.location.href = `/anime/${currentFeatured._id}`}
                                     >
                                         <Play size={24} fill="currentColor" />
                                         Watch Now
+                                    </Button> */}
+
+                                    <Button onClick={scrollToOriginals}>
+                                        Explore Worlds
                                     </Button>
-                                    <Button
+
+                                    {/* <Button
                                         size="xl"
                                         variant="outline"
                                         className="gap-2 bg-white/5 border-white/10 hover:bg-white/10 backdrop-blur-md"
@@ -137,7 +150,13 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
                                     >
                                         <Info size={20} />
                                         More Info
+                                    </Button> */}
+
+
+                                    <Button onClick={() => router.push("/community")}>
+                                        Join The Movement
                                     </Button>
+
                                 </div>
                             </div>
                         </div>
@@ -183,14 +202,14 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
                     )}
 
                     {/* Search bar overlay */}
-                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-4">
+                    {/* <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-4">
                         <SearchBar
                             placeholder="Search your collection..."
                             size="lg"
                             className="shadow-2xl"
                             onFocus={() => setIsSearchOpen(true)}
                         />
-                    </div>
+                    </div> */}
                 </section>
             ) : (
                 // Empty state hero
@@ -241,7 +260,9 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
                     )}
 
                     {/* Originals */}
-                    <Originals />
+                    <div ref={originalsRef}>
+                        <Originals />
+                    </div>
 
                     {/* Other Content (Existing) */}
 
@@ -306,7 +327,7 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
                 onClose={() => setIsSearchOpen(false)}
                 onSelect={(item) => {
                     // Navigate to anime detail page
-                    window.location.href = `/anime/${item._id || item.id}`;
+                    router.push(`/anime/${item._id || item.id}`);
                 }}
             />
         </main>
