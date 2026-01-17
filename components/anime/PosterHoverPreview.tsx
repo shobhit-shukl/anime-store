@@ -80,7 +80,7 @@ export function PosterHoverPreview({
               e.stopPropagation();
               onPlay?.();
             }}
-            className="w-14 h-14 rounded-full bg-blue-600/90 backdrop-blur-sm flex items-center justify-center shadow-xl shadow-blue-600/30 hover:bg-blue-500 transition-all hover:scale-110"
+            className="w-14 h-14 rounded-full bg-black/90 backdrop-blur-sm flex items-center justify-center shadow-xl shadow-[0_8px_30px_rgba(0,0,0,0.6)] hover:bg-slate-800 transition-all hover:scale-110"
           >
             <Play size={24} className="text-white ml-1" fill="currentColor" />
           </button>
@@ -143,7 +143,7 @@ export function PosterHoverPreview({
               e.stopPropagation();
               onPlay?.();
             }}
-            className="flex-1 flex items-center justify-center gap-2 h-10 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold text-sm transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 h-10 bg-black hover:bg-slate-900 rounded-xl font-bold text-sm transition-colors"
           >
             <Play size={16} fill="currentColor" />
             Watch Now
