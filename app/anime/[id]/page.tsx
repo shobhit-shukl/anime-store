@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -56,7 +56,7 @@ interface AnimeDetail {
   externalLinks?: { platform: string; url: string }[];
 }
 
-export default function AnimeDetailPage() {
+function AnimeDetailContent() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -470,6 +470,14 @@ export default function AnimeDetailPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function AnimeDetailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[--background] text-[--foreground] transition-colors"><Navbar /><AnimeDetailSkeleton /><Footer /></div>}>
+      <AnimeDetailContent />
+    </Suspense>
   );
 }
 

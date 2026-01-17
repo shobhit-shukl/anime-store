@@ -14,7 +14,7 @@ interface AnimeRowProps {
   subtitle?: string;
   animeList: AnimeData[];
   loading?: boolean;
-  variant?: "default" | "compact" | "featured";
+  variant?: "default" | "compact" | "featured" | "horizontal";
   showViewAll?: boolean;
   onViewAll?: () => void;
   onAnimeSelect?: (anime: AnimeData) => void;
@@ -153,7 +153,7 @@ export function AnimeRow({
               key={anime.id || anime._id || index}
               className={cn(
                 "shrink-0 snap-start",
-                variant === "featured" ? "w-[500px]" : variant === "compact" ? "w-40" : "w-64"
+                variant === "featured" ? "w-[500px]" : variant === "horizontal" ? "w-[350px]" : variant === "compact" ? "w-40" : "w-64"
               )}
             >
               <AnimeCard

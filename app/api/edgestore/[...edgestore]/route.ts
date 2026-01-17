@@ -10,6 +10,9 @@ const edgeStoreRouter = es.router({
   anime: es.imageBucket({
     maxSize: 5 * 1024 * 1024, // 5MB
   }),
+  comingsoon: es.fileBucket({
+    maxSize: 20 * 1024 * 1024, // 20MB for videos
+  }),
 });
 
 const handler = createEdgeStoreNextHandler({
