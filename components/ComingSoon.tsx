@@ -48,6 +48,10 @@ interface TimeLeft {
   seconds: number;
 }
 
+interface LottieAnimationData {
+  [key: string]: unknown;
+}
+
 /* ---------------- CONSTANTS ---------------- */
 
 const TARGET_DATE = new Date('2026-02-14T06:00:00+05:30').getTime();
@@ -75,7 +79,7 @@ export default function ComingSoon({
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
-  const [animationData, setAnimationData] = useState<any>(null);
+  const [animationData, setAnimationData] = useState<LottieAnimationData | null>(null);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -178,7 +182,7 @@ export default function ComingSoon({
         <div className="">
         {/* <div className="rounded-lg bg-white/90 p-1.5 shadow-xl backdrop-blur-md"> */}
           <Image
-            src="/logo.png"
+            src="/Slice-meow-logo-white-color.png"
             alt="Slice Meow"
             width={96}
             height={96}
