@@ -8,6 +8,9 @@ import { AnimeRow, GenrePill, RatingBadge } from "@/components/anime";
 import { Button } from "@/components/ui/button";
 import { HeroSkeleton, AnimeRowSkeleton } from "@/components/ui/skeleton";
 import { SearchBar, SearchModal } from "@/components/layout/SearchModal";
+import { SupportSection } from "./SupportSection";
+import { CommunityVoice } from "./CommunityVoice";
+import { Originals } from "./Originals";
 import { type Anime, type Movie, ANIME_GENRES } from "@/types/anime";
 
 type AnimeData = Anime | Movie;
@@ -216,31 +219,31 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
             )}
 
             {/* Content sections */}
-            <div className="max-w-7xl mx-auto px-6 space-y-4 pb-20">
-                <>
-                    {/* Trending Section */}
-                    {webseries.length > 0 && (
+            <div className="space-y-4 pb-20">
+
+                {/* Support Section */}
+                <SupportSection />
+
+                {/* Community Voice */}
+                <CommunityVoice />
+
+                <div className="max-w-7xl mx-auto px-6 space-y-4">
+                    {/* Trending Worlds */}
+                    {movies.length > 0 && (
                         <AnimeRow
-                            title="Trending Now"
-                            subtitle="Most watched this week"
-                            animeList={webseries}
+                            title="Trending Worlds"
+                            subtitle="Explore vast universes"
+                            animeList={movies.slice(0, 3)}
                             onAnimeSelect={handleAnimeSelect}
                             accentColor="purple"
+                            variant="featured"
                         />
                     )}
 
-                    {/* Movies Section */}
-                    {movies.length > 0 && (
-                        <AnimeRow
-                            title="Movies"
-                            subtitle="Feature-length anime films"
-                            animeList={movies}
-                            onAnimeSelect={handleAnimeSelect}
-                            accentColor="blue"
-                            showViewAll
-                            onViewAll={() => console.log("View all movies")}
-                        />
-                    )}
+                    {/* Originals */}
+                    <Originals />
+
+                    {/* Other Content (Existing) */}
 
                     {/* Web Series Section */}
                     {webseries.length > 0 && (
@@ -292,7 +295,7 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
                             accentColor="orange"
                         />
                     )}
-                </>
+                </div>
             </div>
 
             <Footer />
