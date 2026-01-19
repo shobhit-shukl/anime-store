@@ -5,15 +5,11 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   Play,
-  Plus,
-  Share2,
   Calendar,
   Clock,
   ChevronLeft,
   ExternalLink,
-  Heart,
   Download,
-  Check,
 } from "lucide-react";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -66,7 +62,7 @@ export default function AnimeDetailPage() {
   const [similar, setSimilar] = useState<AnimeDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeSeason, setActiveSeason] = useState(1);
-  const [inWatchlist, setInWatchlist] = useState(false);
+
   const [expandedSynopsis, setExpandedSynopsis] = useState(false);
 
   useEffect(() => {
@@ -210,22 +206,7 @@ export default function AnimeDetailPage() {
                   {isStandalone ? "Watch Now" : "Start Watching"}
                 </Button>
               </div>
-              <div className="mt-3 grid grid-cols-3 gap-3">
-                <Button
-                  variant={inWatchlist ? "secondary" : "outline"}
-                  size="sm"
-                  onClick={() => setInWatchlist(!inWatchlist)}
-                  className="flex-1"
-                >
-                  {inWatchlist ? <Check size={18} /> : <Plus size={18} />}
-                </Button>
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Heart size={18} />
-                </Button>
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Share2 size={18} />
-                </Button>
-              </div>
+
             </div>
           </div>
 
@@ -462,6 +443,9 @@ export default function AnimeDetailPage() {
                   genres: item.genres,
                 }}
                 variant="compact"
+                onSelect={(anime) => {
+                  router.push(`/anime/${anime._id || anime.id}`);
+                }}
               />
             ))}
           </div>

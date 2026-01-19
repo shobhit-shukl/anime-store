@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Grid, List, SlidersHorizontal, X } from "lucide-react";
 import { Navbar, Footer } from "@/components/layout";
 import { AnimeCard, GenrePill } from "@/components/anime";
@@ -31,7 +31,7 @@ export default function BrowsePage() {
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // Filters
   const [filters, setFilters] = useState<AnimeFilters>({
     genre: undefined,
@@ -44,6 +44,7 @@ export default function BrowsePage() {
   });
 
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     const type = searchParams.get("type");
@@ -539,7 +540,7 @@ export default function BrowsePage() {
                 key={anime.id || anime._id || index}
                 anime={anime}
                 variant={viewMode === "list" ? "horizontal" : "default"}
-                onSelect={(a) => console.log("Selected:", a)}
+                onSelect={(a) => router.push(`/anime/${a._id || a.id}`)}
               />
             ))}
           </div>

@@ -64,16 +64,14 @@ export function Navbar({ isLoggedIn = false, username, onLogout }: NavbarProps) 
             {/* Logo */}
             {/* Logo - White Rounded Background + Refined Scale */}
             <Link href="/" className="flex items-center group transition-transform hover:scale-105">
-              <div className="bg-white rounded-xl px-1.5  shadow-[0_4px_20px_rgba(255,255,255,0.1)]">
-                <Image
-                  src="/Slice Meow Final-log.png"
-                  alt="Slice Meow"
-                  width={150}
-                  height={150}
-                  className="h-14 w-auto object-contain"
-                  priority
-                />
-              </div>
+              <Image
+                src="/Slice Meow Final-log.png"
+                alt="Slice Meow"
+                width={200}
+                height={80}
+                className="h-14 md:h-16 w-auto object-contain drop-shadow-[0_0_5px_rgba(255,255,255,0.8)]"
+                priority
+              />
             </Link>
 
             {/* Desktop Navigation */}

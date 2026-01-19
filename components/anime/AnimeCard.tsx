@@ -245,7 +245,14 @@ export function AnimeCard({
               isHovered ? "opacity-100" : "opacity-0"
             )}
           >
-            <button className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center shadow-xl shadow-blue-600/30 hover:bg-blue-500 transition-colors">
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onSelect?.(anime);
+              }}
+              className="w-14 h-14 rounded-full bg-blue-600 flex items-center justify-center shadow-xl shadow-blue-600/30 hover:bg-blue-500 transition-colors"
+            >
               <Play size={24} className="text-white ml-1" fill="currentColor" />
             </button>
             {onAddToWatchlist && (

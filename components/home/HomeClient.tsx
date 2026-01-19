@@ -48,7 +48,12 @@ export default function HomeClient({ initialMovies, initialWebseries }: HomeClie
     const currentFeatured = featuredAnime[currentSlide];
 
     const handleAnimeSelect = (anime: AnimeData) => {
-        console.log("Selected:", anime);
+        const targetId = anime._id || anime.id;
+        if (targetId) {
+            router.push(`/anime/${targetId}`);
+        } else {
+            console.error("Cannot navigate: Anime ID is missing", anime);
+        }
     };
 
     const originalsRef = React.useRef<HTMLDivElement>(null);

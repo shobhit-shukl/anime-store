@@ -68,7 +68,7 @@ export async function GET(req: Request) {
     if (id) {
       const series = await WebSeries.findById(id);
       if (!series) return NextResponse.json({ message: "Series not found" }, { status: 404 });
-      return NextResponse.json({ series }, { status: 200 });
+      return NextResponse.json({ webseries: series }, { status: 200 });
     }
 
     const webseries = await WebSeries.find({});
